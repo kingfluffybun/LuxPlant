@@ -63,6 +63,10 @@ a {
     font-family: var(--font-montserrat);
     text-decoration: none;
     font-size: 1.25rem;
+    transition: filter 200ms ease;
+    &:hover {
+        filter: brightness(1.2);
+    }
 }
 
 input[type=text], input[type=password], input[type=email] {

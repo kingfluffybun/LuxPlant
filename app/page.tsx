@@ -11,7 +11,7 @@ export default function Home() {
     return (
         <div>
             <main>
-                <Navigation />
+                <Navigation transparentAtTop />
                 <div className="hero">
                     <video src="/assets/landing-page.mp4" autoPlay loop muted playsInline />
                     <div className="hero-text">

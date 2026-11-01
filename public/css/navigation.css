@@ -6,10 +6,20 @@
   height: 80px;
   padding: 0 80px;
   width: 100%;
-  background-color: transparent;
   z-index: 2;
+  
+  backdrop-filter: blur(4px);
+  transition: background-color 200ms ease;
+}
+
+.site-nav-transparent {
+  background-color: transparent;
+  border: none;
+}
+
+.site-nav-solid {
+  background-color: var(--nav-footer);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(4);
 }
 
 .site-nav-logo p {

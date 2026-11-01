@@ -1,10 +1,39 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default function Navigation() {
+type NavigationProps = {
+  transparentAtTop?: boolean;
+};
+
+export default function Navigation({ transparentAtTop = false }: NavigationProps) {
+  const [isOverHero, setIsOverHero] = useState(transparentAtTop);
+
+  useEffect(() => {
+    if (!transparentAtTop) {
+      return;
+    }
+
+    const updateBackground = () => {
+      const hero = document.querySelector(".hero");
+      setIsOverHero(hero instanceof HTMLElement && hero.getBoundingClientRect().bottom > 80);
+    };
+
+    updateBackground();
+    window.addEventListener("scroll", updateBackground, { passive: true });
+    window.addEventListener("resize", updateBackground);
+
+    return () => {
+      window.removeEventListener("scroll", updateBackground);
+      window.removeEventListener("resize", updateBackground);
+    };
+  }, [transparentAtTop]);
+
   return (
-    <nav className="site-nav">
+    <nav className={`site-nav ${isOverHero ? "site-nav-transparent" : "site-nav-solid"}`}>
       <Link href={"/"} className="site-nav-logo">
         <Image src="/assets/logo/logo-white.png" width={160} height={160} alt="LuxPlant Logo" />
       </Link>
