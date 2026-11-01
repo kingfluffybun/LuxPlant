@@ -61,14 +61,15 @@ export default function Home() {
                         <h1>Two plants, one system - pick the one that fits your space</h1>
                     </div>
                     <div className="product-preview">
-                        <div className="image-placeholder">
+                        <div className="image-placeholder" id="luxplant-mini">
+                            <Image src="/assets/plants/luxplant-mini-main.jpeg" width={400} height={400} alt="LuxPlant Mini" />
                             <div className="product-name">
                                 <h2>LuxPlant Mini</h2>
                                 <div className="icon circle"><MoveUpRight size={24} /></div>
                             </div>
-                            
                         </div>
-                        <div className="image-placeholder">
+                        <div className="image-placeholder" id="luxplant-standard">
+                            <Image src="/assets/plants/luxplant-standard-main.jpeg" width={400} height={400} alt="LuxPlant Standard" />
                             <div className="product-name">
                                 <h2>LuxPlant Standard</h2>
                                 <div className="icon circle"><MoveUpRight size={24} /></div>
