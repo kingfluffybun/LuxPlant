@@ -1,4 +1,4 @@
-import "../public/css/landing-page.css";
+import "../luxplant/public/css/landing-page.css";
 import Link from "next/link";
 import Image from "next/image";
 import {MoveUpRight} from "lucide-react"
