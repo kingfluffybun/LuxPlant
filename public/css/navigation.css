@@ -9,7 +9,7 @@
   background-color: transparent;
   z-index: 2;
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(4);
 }
 
 .site-nav-logo p {

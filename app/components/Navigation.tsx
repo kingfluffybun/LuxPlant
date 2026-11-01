@@ -5,14 +5,9 @@ import { ShoppingCart, User } from "lucide-react";
 export default function Navigation() {
   return (
     <nav className="site-nav">
-      <div className="site-nav-logo">
-        <Image
-          src="/assets/logo/logo-white.png"
-          width={160}
-          height={160}
-          alt="LuxPlant Logo"
-        />
-      </div>
+      <Link href={"/"} className="site-nav-logo">
+        <Image src="/assets/logo/logo-white.png" width={160} height={160} alt="LuxPlant Logo" />
+      </Link>
       <div className="site-nav-links">
         <Link href="/#Product">Product</Link>
         <Link href="/#Gallery">Gallery</Link>
@@ -21,12 +16,8 @@ export default function Navigation() {
         <Link href="/#About">About</Link>
       </div>
       <div className="site-nav-icons">
-        <Link href="/" aria-label="Account">
-          <User />
-        </Link>
-        <Link href="/" aria-label="Shopping cart">
-          <ShoppingCart />
-        </Link>
+        <Link href="/login" aria-label="Account"> <User /> </Link>
+        <Link href="/" aria-label="Shopping cart"> <ShoppingCart /> </Link>
       </div>
     </nav>
   );

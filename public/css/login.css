@@ -1,0 +1,115 @@
+.login-main,
+.register-main,
+.recovery-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    background-color: var(--background);
+}
+
+.register-main,
+.recovery-main {
+    padding: 48px 24px;
+}
+
+.login-container,
+.register-container,
+.recovery-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    min-width: 520px;
+}
+
+.register-container,
+.recovery-container {
+    width: min(100%, 520px);
+}
+
+.login,
+.register,
+.recovery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+}
+
+.login-header,
+.register-header,
+.recovery-header {
+    text-align: center;
+}
+
+.login-or {
+    display: flex;
+    align-items: center;
+    p {white-space: nowrap; font-size: 1rem;}
+    gap: 12px;
+    width: 100%;
+    .divider {height: 2px; width: 100%; background-color: var(--border);}
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    input {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+    }
+    .login-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .login-remember-forgot {
+        display: flex;
+        justify-content: space-between;
+        label, a {font-size: 1rem;}
+        div {display: flex; gap: 4px; align-items: center;}
+        input[type=checkbox] {
+            width: 16px; height: 16px;
+            border-radius: 8px;
+        }
+    }
+    button[type=submit] {margin-top: 12px;}
+}
+
+.login-social-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: solid 1px var(--border);
+    p {color: var(--text-main); font-size: 1rem;}
+}
+
+.register-header {
+    white-space: nowrap;
+}
+
+.recovery-header h1 {
+    white-space: nowrap;
+}
+
+.register-name-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.login-main a,
+.register-main a,
+.recovery-main a {
+    color: var(--primary);
+}

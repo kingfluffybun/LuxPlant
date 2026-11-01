@@ -32,8 +32,10 @@ b {
 }
 
 
-small {
+small, label {
+    font-family: var(--font-roboto);
     color: var(--text-muted);
+    font-size: 1rem;
 }
 
 h1, h2, h3 {
@@ -63,6 +65,9 @@ a {
     font-size: 1.25rem;
 }
 
+input[type=text], input[type=password], input[type=email] {
+    padding: 12px 24px;
+}
 
 .link-button-primary, .link-button-secondary {
     display: flex;
