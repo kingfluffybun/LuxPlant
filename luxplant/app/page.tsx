@@ -1,69 +1,173 @@
+import "../public/css/landing-page.css";
+import Link from "next/link";
 import Image from "next/image";
+import {MoveUpRight} from "lucide-react"
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    return (
+        <div>
+            <main>
+                <nav>
+                    <div className="logo">
+                        <p>LuxPlant</p>
+                    </div>
+                    <div className="nav-links">
+                        <Link href={"/#Product"}>Product</Link>
+                        <Link href={"/#Gallery"}>Gallery</Link>
+                        <Link href={"/#Docs"}>Docs</Link>
+                        <Link href={"/#App"}>App</Link>
+                        <Link href={"/#About"}>About</Link>
+                    </div>
+                    <Link href={"/"} className="link-button-primary">Get Started</Link>
+                </nav>
+                <div className="hero">
+                    <video src="/assets/landing-page.mp4" autoPlay loop muted playsInline />
+                    <div className="hero-text">
+                        <h1>A plant that grows in color, powered by light</h1>
+                        <p>LuxPlant is a fully 3D-printed LED plant — modular stems, diffused glowing leaves, and full control over every color and animation.</p>
+                        <div>
+                            <Link href={"/"} className="link-button-primary">Get Started</Link>
+                            <Link href={"/"} className="link-button-secondary">Learn More</Link>
+                        </div>
+                    </div>
+                </div>
+                <section className="text-image-section">
+                    <div className="section-text">
+                        <h1>Built out of a shipping problem</h1>
+                        <p>This started as a gift — a Fluora LED Plant that couldn't ship to my country. 
+                            So I built one myself instead. Every stem is 3D-printed, every leaf is tuned for even light diffusion
+                        </p>
+                        <Link href={"/"} className="link-button-primary">Read the full story</Link>
+                    </div>
+                    <div className="section-img">
+                        <div className="image-placeholder"></div>
+                    </div>
+                </section>
+                <section className="center-section">
+                    <div className="section-text">
+                        <h1>Gallery</h1>
+                        <p>Every LuxPlant glows a little differently. Here’s how it looks in real spaces.</p>
+                    </div>
+                    <div className="gallery-preview">
+                        <div>
+                            <Image src="/assets/plants/plant-1.png" width={400} height={400} alt="LuxPlant Gallery Image 1" />
+                            <Image src="/assets/plants/plant-5.png" width={400} height={400} alt="LuxPlant Gallery Image 5" />
+                        </div>
+                        <div>
+                            <Image src="/assets/plants/plant-2.png" width={400} height={400} alt="LuxPlant Gallery Image 2" />
+                            <Image src="/assets/plants/plant-4.png" width={400} height={400} alt="LuxPlant Gallery Image 4" />
+                        </div>
+                        <div>
+                            <Image src="/assets/plants/plant-3.png" width={400} height={400} alt="LuxPlant Gallery Image 3" />
+                            <Image src="/assets/plants/plant-6.png" width={400} height={400} alt="LuxPlant Gallery Image 6" />
+                        </div>
+                    </div>
+                    <Link href={"/"} className="link-button-primary">View Full Gallery</Link>
+                </section>
+                <section className="center-section">
+                    <div className="section-text">
+                        <h1>Two plants, one system - pick the one that fits your space</h1>
+                    </div>
+                    <div className="product-preview">
+                        <div className="image-placeholder">
+                            <div className="product-name">
+                                <h2>LuxPlant Mini</h2>
+                                <div className="icon circle"><MoveUpRight size={24} /></div>
+                            </div>
+                            
+                        </div>
+                        <div className="image-placeholder">
+                            <div className="product-name">
+                                <h2>LuxPlant Standard</h2>
+                                <div className="icon circle"><MoveUpRight size={24} /></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="center-section">
+                    <div className="section-text">
+                        <h1>Built by one person, shaped by everyone who's tried it</h1>
+                    </div>
+                    <div className="testimonial-preview">
+                        <div className="testimonial-card">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                            <div>
+                                <b>Clarence Jerald G. Luna</b>
+                                <p>LuxPlant Maker</p>
+                            </div>
+                        </div>
+                        <div className="testimonial-card">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                            <div>
+                                <b>Kevenly H. Luistro</b>
+                                <p>LuxPlant Maker</p>
+                            </div>
+                        </div>
+                        <div className="testimonial-card">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                            <div>
+                                <b>Christian Patrick T. Panti</b>
+                                <p>LuxPlant Maker</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="text-image-section">
+                    <div className="section-img">
+                        <div className="image-placeholder"></div>
+                    </div>
+                    <div className="section-text">
+                        <h1>Your plant, controlled from your pocket</h1>
+                        <p>The LuxPlant app wraps WLED's API into a simpler interface built just for the plant — colors, brightness, effects, and schedules in one place.</p>
+                        <Link href={"/"} className="link-button-primary">Download the App</Link>
+                    </div>
+                </section>
+                <section className="center-section" style={{ justifyContent: "center"}}>
+                    <div className="section-text">
+                        <h1>Ready to bring your own LuxPlant to life?</h1>
+                        <p>Print it yourself from the STL files, or follow the build guide at your own pace. Either way, you end up with a plant that glows exactly how you want it.</p>
+                    </div>
+                    <Link href={"/"} className="link-button-primary" style={{ width: "600px" }}>Get Started</Link>
+                </section>
+                <footer>
+                    <div className="logo">
+                        <div>
+                            <h2>LuxPlant</h2>
+                            <p>Not your ordinary plant</p>
+                        </div>
+                        <div className="socials-container">
+                            <Link href={"/"} className="socials"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><title>Facebook</title><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></Link>
+                            <Link href={"/"} className="socials"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><title>Instagram</title><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg></Link>
+                            <Link href={"/"} className="socials"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><title>Patreon</title><path d="M22.957 7.21c-.004-3.064-2.391-5.576-5.191-6.482-3.478-1.125-8.064-.962-11.384.604C2.357 3.231 1.093 7.391 1.046 11.54c-.039 3.411.302 12.396 5.369 12.46 3.765.047 4.326-4.804 6.068-7.141 1.24-1.662 2.836-2.132 4.801-2.618 3.376-.836 5.678-3.501 5.673-7.031Z"/></svg></Link>
+                            <Link href={"/"} className="socials"><svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><title>Discord</title><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg></Link>
+                        </div>
+                    </div>
+                    <div className="footer-links">
+                        <b>Menu</b>
+                        <ul>
+                            <li><Link href={"/#Product"}>Product</Link></li>
+                            <li><Link href={"/#Gallery"}>Gallery</Link></li>
+                            <li><Link href={"/#Docs"}>Docs</Link></li>
+                            <li><Link href={"/#App"}>App</Link></li>
+                            <li><Link href={"/#About"}>About</Link></li>
+                        </ul>
+                    </div>
+                    <div className="footer-links">
+                        <b>Shop</b>
+                        <ul>
+                            <li><Link href={"/"}>LuxPlant Mini</Link></li>
+                            <li><Link href={"/"}>LuxPlant Standard</Link></li>
+                        </ul>
+                    </div>
+                    <div className="footer-links">
+                        <b>Policies</b>
+                        <ul>
+                            <li><Link href={"/"}>Privacy Policy</Link></li>
+                            <li><Link href={"/"}>Terms of Service</Link></li>
+                        </ul>
+                    </div>
+                </footer>
+            </main>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    );
 }

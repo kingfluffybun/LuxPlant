@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    scroll-behavior: smooth;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #121212;
+  --secondary-background: #1b1b1b;
+  --background-inverse: #fff;
+  --nav-footer: #202020;
+  --primary: #5A9A0A;
+  --text-main: #eee;
+  --text-body: #bbb;
+  --text-muted: #888;
+  --border: #ffffff1a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+p {
+    font-family: var(--font-roboto);
+    color: var(--text-body);
+    font-size: 1.25rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+b {
+    font-family: var(--font-roboto);
+    color: var(--text-main);
+    font-size: 1.25rem;
+    font-weight: 700;
 }
+
+
+small {
+    color: var(--text-muted);
+}
+
+h1, h2, h3 {
+    font-family: var(--font-montserrat);
+    color: var(--text-main);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 3.25rem;
+    margin-bottom: 8px;
+}
+
+h2 {font-size: 2.25rem;}
+
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text-main);
+    line-height: 1.5;
 }
+
+a {
+    font-family: var(--font-montserrat);
+    text-decoration: none;
+    font-size: 1.25rem;
+}
+
+
+.link-button-primary, .link-button-secondary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-montserrat);
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.link-button-primary {
+    background-color: var(--primary);
+    color: var(--text-main);
+}
+
+.link-button-secondary {
+    border: 4px solid var(--primary);
+    color: var(--primary);
+    
+}
+
+.icon.circle {
+    width: 48px; height: 48px;
+    display: flex; justify-content: center; align-items: center;
+    border-radius: 999px; border: 2px solid currentColor;
+}
+
