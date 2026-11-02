@@ -118,7 +118,7 @@ export default function Home() {
                 <section className="center-section" style={{ justifyContent: "center"}}>
                     <div className="section-text">
                         <h1>Ready to bring your own LuxPlant to life?</h1>
-                        <p>Print it yourself from the STL files, or follow the build guide at your own pace. Either way, you end up with a plant that glows exactly how you want it.</p>
+                        <p>Bring home a ready-to-enjoy LuxPlant with glowing leaves, customizable colors, and app-based control. Choose the plant that fits your space and make it your own.</p>
                     </div>
                     <Link href={"/"} className="link-button-primary" style={{ width: "600px" }}>Get Started</Link>
                 </section>

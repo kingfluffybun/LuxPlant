@@ -32,7 +32,6 @@ export default function LuxPlantMiniPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [trackIndex, setTrackIndex] = useState(1);
     const [transitionEnabled, setTransitionEnabled] = useState(true);
-    const [selectedType, setSelectedType] = useState<"unit" | "stl">("unit");
     const [quantity, setQuantity] = useState("1");
     const [quantityOption, setQuantityOption] = useState<"single" | "multiple">("single");
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -40,12 +39,12 @@ export default function LuxPlantMiniPage() {
     const thumbnailStripRef = useRef<HTMLDivElement | null>(null);
     const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
     const numericQuantity = Math.min(10, Math.max(1, Number(quantity) || 1));
-    const hasQuantityDiscount = selectedType === "unit" && numericQuantity >= 2;
+    const hasQuantityDiscount = numericQuantity >= 2;
     const subtotal = UNIT_PRICE * numericQuantity;
     const totalPrice = hasQuantityDiscount
         ? Math.round(subtotal * (1 - MULTI_UNIT_DISCOUNT))
         : subtotal;
-    const cartPrice = selectedType === "unit" ? formatPrice(totalPrice) : "$5";
+    const cartPrice = formatPrice(totalPrice);
 
     const trackSlides = [
         productSlides[productSlides.length - 1],
@@ -186,7 +185,7 @@ export default function LuxPlantMiniPage() {
                     <h1>LuxPlant Mini</h1>
                     <form>
                         <fieldset className="product-options">
-                            {selectedType === "unit" && <div className="product-quantity">
+                            <div className="product-quantity">
                                 <div className="product-quantity-label">
                                     <p>Quantity</p>
                                     <div className="product-quantity-prices" aria-live="polite">
@@ -224,34 +223,7 @@ export default function LuxPlantMiniPage() {
                                         </button>
                                     </div>
                                 </div>}
-                            </div>}
-                            <p>Select Option</p>
-                            <label className="product-option">
-                                <input type="radio" name="type" value="unit" required checked={selectedType === "unit"} onChange={() => setSelectedType("unit")} />
-                                <span className="radio">
-                                    <div className="product-option-price">
-                                        <div className="product-option-labels">
-                                            <b>Built Unit</b>
-                                            <span>Ready to plug in. Philippines only. Ships in about 2 to 3 days</span>
-                                        </div>
-                                        <b>₱3500</b>
-                                    </div>
-                                    <span className="circle" aria-hidden="true"><Check size={12}/></span>
-                                </span>
-                            </label>
-                            <label className="product-option">
-                                <input type="radio" name="type" value="stl" checked={selectedType === "stl"} onChange={() => setSelectedType("stl")} />
-                                <span className="radio">
-                                    <div className="product-option-price">
-                                        <div className="product-option-labels">
-                                            <b>Buy STL File</b>
-                                            <span>Print it yourself. Files and docs unlock on your account after purchase.</span>
-                                        </div>
-                                        <b>$5</b>
-                                    </div>
-                                    <span className="circle" aria-hidden="true"><Check size={12}/></span>
-                                </span>
-                            </label>
+                            </div>
                         </fieldset>
                         <div className="product-actions">
                             <button type="submit" className="link-button-primary">
@@ -342,20 +314,6 @@ export default function LuxPlantMiniPage() {
                                 <li>18-month warranty</li>
                                 <li>If something breaks, it is replaced, no questions asked.</li>
                                 <li>Free repairs even after the warranty has expired</li>
-                            </ul>
-                        </ProductDropdown>
-                        <ProductDropdown
-                            id="stl-license"
-                            title="STL files and license"
-                            isOpen={openDropdown === "stl-license"}
-                            onToggle={() => setOpenDropdown((current) => current === "stl-license" ? null : "stl-license")}
-                        >
-                            <ul>
-                                <li>$5 gets you personal use of the LuxPlant Mini files</li>
-                                <li>You may print for family and friends</li>
-                                <li>Do not redistribute or sell the files, or sell physical copies</li>
-                                <li>The fully modular stem is exclusive to people who buy the files</li>
-                                <li>To sell prints, you need the Commercial License</li>
                             </ul>
                         </ProductDropdown>
                     </div>
