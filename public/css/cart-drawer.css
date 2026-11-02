@@ -29,6 +29,29 @@
     animation: cart-drawer-width-in 250ms ease both;
 }
 
+#cart-drawer-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+}
+
+.cart-drawer-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 48px;
+    
+}
+
+.cart-drawer-login {
+    line-height: 2;
+    text-align: center;
+    p a {color: var(--primary);}
+}
+
 .cart-drawer-container.is-closing .cart-drawer-overlay {
     animation: cart-overlay-out 250ms ease both;
 }

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { X, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 type CartDrawerProps = {
     onClose: () => void;
@@ -90,31 +91,20 @@ export default function CartDrawer({ onClose, triggerRef }: CartDrawerProps) {
 
     return createPortal(
         <div className={`cart-drawer-container${isClosing ? " is-closing" : ""}`}>
-            <button
-                type="button"
-                className="cart-drawer-overlay"
-                aria-label="Close cart"
-                onClick={closeDrawer}
-            />
-            <div
-                ref={dialogRef}
-                className="cart-drawer"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="cart-drawer-title"
-            >
+            <button type="button" className="cart-drawer-overlay" aria-label="Close cart" onClick={closeDrawer} />
+            <div ref={dialogRef} className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" >
                 <div className="cart-drawer-header">
-                    <h2 id="cart-drawer-title">Your cart</h2>
-                    <button
-                        type="button"
-                        className="cart-drawer-close"
-                        aria-label="Close cart"
-                        onClick={closeDrawer}
-                    >
-                        <X aria-hidden="true" />
-                    </button>
+                    <h2 id="cart-drawer-title"><ShoppingCart size={36}/>Your cart</h2>
+                    <button type="button" className="cart-drawer-close" aria-label="Close cart" onClick={closeDrawer} > <X aria-hidden="true" /> </button>
                 </div>
-                <p>Your cart is empty.</p>
+                <div className="cart-drawer-content">
+                    <h3>Your cart is empty.</h3>
+                    <Link href="/product/luxplant-mini" className="link-button-primary">Continue shopping</Link>
+                    <div className="cart-drawer-login">
+                        <b>Have an account?</b>
+                        <p><Link href="/login">Log in</Link> to checkout faster.</p>
+                    </div>
+                </div>
             </div>
         </div>,
         document.body,
