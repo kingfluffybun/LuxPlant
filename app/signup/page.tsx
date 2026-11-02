@@ -132,7 +132,7 @@ export default function SignupPage() {
                             <div className="login-form-group">
                                 <label htmlFor="password">Password</label>
                                 <input 
-                                    type="password" 
+                                    type={showPassword ? "text" : "password"} 
                                     id="password" 
                                     name="password" 
                                     autoComplete="new-password" 

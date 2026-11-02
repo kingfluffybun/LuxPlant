@@ -60,6 +60,7 @@ export default function LoginPage() {
                                 Don't have an account yet? <Link href="/signup">Sign up now</Link>
                             </p>
                         </div>
+
                         {/* Error message */}
                         {errorMsg && <p className="login-error" style={{ color: "red" }}>{errorMsg}</p>}
 
@@ -89,7 +90,7 @@ export default function LoginPage() {
                             <div className="login-form-group">
                                 <label htmlFor="password">Password</label>
                                 <input 
-                                    type="password" 
+                                    type={showPassword ? "text" : "password"}
                                     id="password" 
                                     name="password" 
                                     autoComplete="current-password" 
