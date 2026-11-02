@@ -6,7 +6,7 @@
   height: 80px;
   padding: 0 80px;
   width: 100%;
-  z-index: 2;
+  z-index: 999;
   backdrop-filter: blur(4px);
   transition: background-color 200ms ease;
 }

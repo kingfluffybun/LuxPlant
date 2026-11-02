@@ -7,7 +7,7 @@ import Navigation from "../components/Navigation";
 
 export default function ForgotPasswordPage() {
     return (
-        <>
+        <div className="auth-page-layout">
             <Navigation />
             <main className="recovery-main">
                 <div className="recovery-container">
@@ -30,6 +30,6 @@ export default function ForgotPasswordPage() {
                 </div>
             </main>
             <Footer />
-        </>
+        </div>
     );
 }

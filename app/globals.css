@@ -9,6 +9,7 @@
 :root {
   --background: #121212;
   --secondary-background: #1b1b1b;
+  --secondary-background-transparent: rgb(27, 27, 27, 0.5);
   --background-inverse: #fff;
   --nav-footer: #202020;
   --primary: #5A9A0A;
@@ -69,6 +70,10 @@ a {
     }
 }
 
+input {
+    font-family: var(--font-roboto);
+}
+
 input[type=text], input[type=password], input[type=email] {
     padding: 12px 24px;
 }
@@ -81,6 +86,8 @@ input[type=text], input[type=password], input[type=email] {
     padding: 12px 24px;
     border-radius: 999px;
     font-weight: 500;
+    gap: 8px;
+    cursor: pointer;
 }
 
 .link-button-primary {

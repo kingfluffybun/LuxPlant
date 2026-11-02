@@ -8,7 +8,7 @@ import Navigation from "../components/Navigation";
 
 export default function SignupPage() {
     return (
-        <>
+        <div className="auth-page-layout">
             <Navigation />
             <main className="register-main">
                 <div className="register-container">
@@ -55,6 +55,6 @@ export default function SignupPage() {
                 </div>
             </main>
             <Footer />
-        </>
+        </div>
     );
 }
