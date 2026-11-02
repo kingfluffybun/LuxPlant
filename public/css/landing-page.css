@@ -39,6 +39,11 @@
     }
 }
 
+.site-nav-hero-animation {
+    opacity: 0;
+    animation: hero-text-fade-in 1800ms ease 1600ms forwards;
+}
+
 @keyframes hero-text-fade-in {
     to {
         opacity: 1;

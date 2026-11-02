@@ -37,9 +37,9 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   }, [transparentAtTop]);
 
   return (
-    <nav className={`site-nav ${isOverHero ? "site-nav-transparent" : "site-nav-solid"}`}>
+    <nav className={`site-nav ${isOverHero ? "site-nav-transparent" : "site-nav-solid"}${transparentAtTop ? " site-nav-hero-animation" : ""}`}>
       <Link href={"/"} className="site-nav-logo">
-        <Image src="/assets/logo/logo-white.png" width={160} height={160} alt="LuxPlant Logo" />
+        <Image src="/assets/logo/logo-white.png" width={160} height={40} alt="LuxPlant Logo" />
       </Link>
       <div className="site-nav-links">
         <Link href="/#Product">Product</Link>
