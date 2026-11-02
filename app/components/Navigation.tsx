@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
-import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useEffect, useRef, useState } from "react";
+import CartDrawer from "./CartDrawer";
+import "../../public/css/cart-drawer.css";
 
 type NavigationProps = {
   transparentAtTop?: boolean;
@@ -13,7 +15,8 @@ type NavigationProps = {
 export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
   const [user, setUser] = useState<any>(null);
-//   const [userData, setUserData] = useState<any>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartTriggerRef = useRef<HTMLButtonElement>(null);
 
   const supabase = createClient();
 
@@ -48,9 +51,9 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   }, [transparentAtTop]);
 
   return (
-    <nav className={`site-nav ${isOverHero ? "site-nav-transparent" : "site-nav-solid"}`}>
+    <nav className={`site-nav ${isOverHero ? "site-nav-transparent" : "site-nav-solid"}${transparentAtTop ? " site-nav-hero-animation" : ""}`}>
       <Link href={"/"} className="site-nav-logo">
-        <Image src="/assets/logo/logo-white.png" width={160} height={160} alt="LuxPlant Logo" />
+        <Image src="/assets/logo/logo-white.png" width={160} height={40} alt="LuxPlant Logo" />
       </Link>
       <div className="site-nav-links">
         <Link href="/#Product">Product</Link>
@@ -69,10 +72,10 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
             <User />
           </Link>
         )}
-        <Link href="/" aria-label="Shopping cart">
-          <ShoppingCart />
-        </Link>
+        <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} > <ShoppingCart /> </button>
       </div>
+      {isCartOpen && ( <CartDrawer triggerRef={cartTriggerRef} onClose={() => setIsCartOpen(false)} />
+      )}
     </nav>
   );
 }

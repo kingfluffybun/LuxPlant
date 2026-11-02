@@ -7,7 +7,7 @@ import Navigation from "../components/Navigation";
 
 export default function ResetPasswordPage() {
     return (
-        <>
+        <div className="auth-page-layout">
             <Navigation />
             <main className="recovery-main">
                 <div className="recovery-container">
@@ -34,6 +34,6 @@ export default function ResetPasswordPage() {
                 </div>
             </main>
             <Footer />
-        </>
+        </div>
     );
 }

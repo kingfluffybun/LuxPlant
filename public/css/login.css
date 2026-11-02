@@ -1,13 +1,40 @@
+.auth-page-layout {
+    display: grid;
+    grid-template-areas:
+        "nav"
+        "main"
+        "footer";
+    grid-template-rows: 80px minmax(0, 1fr) auto;
+    min-height: 100vh;
+}
+
+.auth-page-layout > .site-nav {
+    position: relative;
+    grid-area: nav;
+}
+
+.auth-page-layout > .login-main,
+.auth-page-layout > .register-main,
+.auth-page-layout > .recovery-main {
+    grid-area: main;
+}
+
+.auth-page-layout > .site-footer {
+    grid-area: footer;
+}
+
 .login-main,
 .register-main,
 .recovery-main {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
+    min-height: 0;
     background-color: var(--background);
+    min-height: 80vh;
 }
 
+.login-main,
 .register-main,
 .recovery-main {
     padding: 48px 24px;

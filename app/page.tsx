@@ -61,19 +61,20 @@ export default function Home() {
                         <h1>Two plants, one system - pick the one that fits your space</h1>
                     </div>
                     <div className="product-preview">
-                        <div className="image-placeholder">
+                        <Link href={"/product/luxplant-mini"} className="image-placeholder" id="luxplant-mini">
+                            <Image src="/assets/plants/luxplant-mini-primary-1.jpeg" width={400} height={400} alt="LuxPlant Mini" />
                             <div className="product-name">
                                 <h2>LuxPlant Mini</h2>
                                 <div className="icon circle"><MoveUpRight size={24} /></div>
                             </div>
-                            
-                        </div>
-                        <div className="image-placeholder">
+                        </Link>
+                        <Link href="/product/luxplant-standard" className="image-placeholder" id="luxplant-standard">
+                            <Image src="/assets/plants/luxplant-standard-main.jpeg" width={400} height={400} alt="LuxPlant Standard" />
                             <div className="product-name">
                                 <h2>LuxPlant Standard</h2>
                                 <div className="icon circle"><MoveUpRight size={24} /></div>
-                            </div>
                         </div>
+                        </Link>
                     </div>
                 </section>
                 <section className="center-section">
@@ -117,7 +118,7 @@ export default function Home() {
                 <section className="center-section" style={{ justifyContent: "center"}}>
                     <div className="section-text">
                         <h1>Ready to bring your own LuxPlant to life?</h1>
-                        <p>Print it yourself from the STL files, or follow the build guide at your own pace. Either way, you end up with a plant that glows exactly how you want it.</p>
+                        <p>Bring home a ready-to-enjoy LuxPlant with glowing leaves, customizable colors, and app-based control. Choose the plant that fits your space and make it your own.</p>
                     </div>
                     <Link href={"/"} className="link-button-primary" style={{ width: "600px" }}>Get Started</Link>
                 </section>

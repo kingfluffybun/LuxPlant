@@ -6,8 +6,7 @@
   height: 80px;
   padding: 0 80px;
   width: 100%;
-  z-index: 2;
-  
+  z-index: 999;
   backdrop-filter: blur(4px);
   transition: background-color 200ms ease;
 }
@@ -22,10 +21,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-.site-nav-logo p {
-  color: var(--text-main);
-}
-
 .site-nav-links {
   display: flex;
   gap: 48px;
@@ -36,4 +31,15 @@
   display: flex;
   justify-self: end;
   gap: 24px;
+}
+
+.site-nav-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
 }

@@ -38,7 +38,7 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       router.push("/");
@@ -48,75 +48,78 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+    return (
+        <div className="auth-page-layout">
+            <Navigation />
+            <main className="login-main">
+                <div className="login-container">
+                    <div className="login">
+                        <div className="login-header">
+                            <h1>Welcome Back</h1>
+                            <p className="login-signup-link">
+                                Don't have an account yet? <Link href="/signup">Sign up now</Link>
+                            </p>
+                        </div>
+                        {/* Error message */}
+                        {errorMsg && <p className="login-error" style={{ color: "red" }}>{errorMsg}</p>}
 
-  return (
-    <>
-      <Navigation />
-      <main className="login-main">
-        <div className="login-container">
-          <div className="login">
-            <div className="login-header">
-              <h1>Welcome Back</h1>
-              <p className="login-signup-link">
-                Don't have an account yet? <Link href="/signup">Sign up now</Link>
-              </p>
-            </div>
-            {errorMsg && <p className="login-error" style={{ color: "red" }}>{errorMsg}</p>}
-            <form className="login-form" onSubmit={handleSubmit}>
-              <button type="button" className="login-social-button" onClick={(e) => { e.preventDefault(); handleOAuthLogin("google"); }}>
-                <Image src="/assets/google-logo.svg" alt="Google" width={32} height={32} />
-                <p>Continue with Google</p>
-              </button>
-              <div className="login-or">
-                <div className="divider" />
-                <p>Or</p>
-                <div className="divider" />
-              </div>
-              <div className="login-form-group">
-                <label htmlFor="email">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    required 
-                    placeholder="alex@example.com" 
-                />
-              </div>
-              <div className="login-form-group">
-                <label htmlFor="password">Password</label>
-                <input 
-                    type={showPassword ? "text" : "password"} 
-                    id="password" 
-                    name="password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                    placeholder="Your password" 
-                />
-                <button 
-                    type="button" 
-                    onClick={() => setShowPassword(!showPassword)}
-                >
-                    {showPassword ? <Eye /> : <EyeClosed />}
-                </button>
-              </div>
-              <div className="login-remember-forgot">
-                <div className="login-remember-me">
-                  <input type="checkbox" id="remember-me" name="remember-me" />
-                  <label htmlFor="remember-me">Remember me</label>
+                        <form className="login-form" onSubmit={handleSubmit}>
+                            <button className="login-social-button" onClick={(e) => { e.preventDefault(); handleOAuthLogin("google"); }}>
+                                <Image src="/assets/google-logo.svg" alt="Google" width={32} height={32} />
+                                <p>Continue with Google</p>
+                            </button>
+                            <div className="login-or">
+                                <div className="divider"></div>
+                                <p>Or</p>
+                                <div className="divider"></div>
+                            </div>
+                            <div className="login-form-group">
+                                <label htmlFor="email">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    autoComplete="email" 
+                                    required 
+                                    placeholder="alex@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                            <div className="login-form-group">
+                                <label htmlFor="password">Password</label>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    autoComplete="current-password" 
+                                    required 
+                                    placeholder="Your password" 
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <Eye /> : <EyeClosed />}
+                                </button>
+                            </div>
+                            <div className="login-remember-forgot">
+                                <div className="login-remember-me">
+                                    <input type="checkbox" id="remember-me" name="remember-me" />
+                                    <label htmlFor="remember-me">Remember me</label>
+                                </div>
+                                <Link href="/forgot-password" className="forgot-password-link">Forgot password?</Link>
+                            </div>
+                            <button type="submit" disabled={loading} className="link-button-primary" >
+                                {loading ? "Logging In..." : "Login"}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <Link href="/forgot-password" className="forgot-password-link">Forgot password?</Link>
-              </div>
-              <button type="submit" disabled={loading} className="link-button-primary">
-                {loading ? "Logging In..." : "Login"}
-              </button>
-            </form>
-          </div>
+            </main>
+            <Footer />
         </div>
-      </main>
-      <Footer />
-    </>
-  );
+    );
 }
