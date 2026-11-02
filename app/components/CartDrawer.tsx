@@ -99,10 +99,10 @@ export default function CartDrawer({ onClose, triggerRef }: CartDrawerProps) {
                 </div>
                 <div className="cart-drawer-content">
                     <h3>Your cart is empty.</h3>
-                    <Link href="/product/luxplant-mini" className="link-button-primary">Continue shopping</Link>
+                    <Link href="/product/luxplant-mini" className="link-button-primary" onClick={onClose}>Continue shopping</Link>
                     <div className="cart-drawer-login">
                         <b>Have an account?</b>
-                        <p><Link href="/login">Log in</Link> to checkout faster.</p>
+                        <p><Link href="/login" onClick={onClose}>Log in</Link> to checkout faster.</p>
                     </div>
                 </div>
             </div>
