@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import CartDrawer from "./CartDrawer";
+import "../../public/css/cart-drawer.css";
 
 type NavigationProps = {
   transparentAtTop?: boolean;
@@ -11,6 +13,8 @@ type NavigationProps = {
 
 export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!transparentAtTop) {
@@ -46,8 +50,10 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       </div>
       <div className="site-nav-icons">
         <Link href="/login" aria-label="Account"> <User /> </Link>
-        <Link href="/" aria-label="Shopping cart"> <ShoppingCart /> </Link>
+        <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} > <ShoppingCart /> </button>
       </div>
+      {isCartOpen && ( <CartDrawer triggerRef={cartTriggerRef} onClose={() => setIsCartOpen(false)} />
+      )}
     </nav>
   );
 }
