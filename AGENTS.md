@@ -186,4 +186,43 @@ Before calling a screen done:
 
 *Source inspiration: Refactoring UI by Adam Wathan and Steve Schoger. This file is an original condensed summary for personal reference, not a copy of the book.*
 
+## Supabase Integration
+
+The project is connected to **Supabase**, which currently provides:
+
+- **User authentication** out‑of‑the‑box (email/password, OAuth, magic links, etc.).
+- Realtime API, storage, and edge functions (available for future use).
+
+At the moment no custom tables have been created. Supabase offers a full backend suite:
+
+- **Authentication** (email/password, OAuth, magic links, phone, etc.)
+- **Auto‑generated REST and GraphQL APIs** for any table in the PostgreSQL database
+- **Realtime** change subscriptions via websockets
+- **Storage** for buckets, public/private files, and CDN edge caching
+- **Edge Functions** (serverless) for custom business logic
+- **Row Level Security (RLS)** policies to protect data per‑row and per‑user
+- **Database**: managed PostgreSQL with extensions (PostGIS, pgvector, etc.)
+- **Analytics** and **Logging** dashboards
+
+To store additional user information you can:
+
+1. **Create a public `users` table** containing only the fields you wish to expose (e.g., `id`, `username`, `avatar_url`).
+2. Use the `auth.users.id` column from Supabase Auth as a **foreign key** to link each record in the public `users` table to the authenticated user.
+3. Keep the public table `SELECT`‑able for any client while the auth table remains private.
+
+Example schema:
+
+```sql
+create table public.users (
+  id uuid primary key references auth.users(id),
+  username text,
+  avatar_url text,
+  created_at timestamp default now()
+);
+```
+
+This approach lets you store basic profile data without modifying Supabase's internal auth table, and you can expand the schema later (e.g., add `role`, `preferences`, etc.). Remember to set Row Level Security (RLS) policies so only the owner can update their own row while the data can be read publicly if desired.
+
+---
+
 <!-- END:nextjs-agent-rules -->

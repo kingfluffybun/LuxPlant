@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 type NavigationProps = {
   transparentAtTop?: boolean;
@@ -11,6 +12,20 @@ type NavigationProps = {
 
 export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
+  const [user, setUser] = useState<any>(null);
+//   const [userData, setUserData] = useState<any>(null);
+
+  const supabase = createClient();
+
+//   Get user data from supabase
+  useEffect(() => {
+    const getUser = async () => {
+        const { data: {user}, error } = await supabase.auth.getUser();
+        setUser(user);
+    }
+
+    getUser();
+}, []);
 
   useEffect(() => {
     if (!transparentAtTop) {
@@ -45,8 +60,18 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
         <Link href="/#About">About</Link>
       </div>
       <div className="site-nav-icons">
-        <Link href="/login" aria-label="Account"> <User /> </Link>
-        <Link href="/" aria-label="Shopping cart"> <ShoppingCart /> </Link>
+        {user ? (
+          <Link href="/account" aria-label="Account">
+            <User />
+          </Link>
+        ) : (
+          <Link href="/login" aria-label="Account">
+            <User />
+          </Link>
+        )}
+        <Link href="/" aria-label="Shopping cart">
+          <ShoppingCart />
+        </Link>
       </div>
     </nav>
   );
