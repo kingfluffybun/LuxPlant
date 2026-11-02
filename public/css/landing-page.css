@@ -16,6 +16,8 @@
 }
 
 .hero-text {
+    opacity: 0;
+    animation: hero-text-fade-in 1800ms ease 1600ms forwards;
     max-width: 1200px;
     display: flex;
     flex-direction: column;
@@ -34,6 +36,12 @@
             width: 100%;
             font-size: 1.5rem;
         }
+    }
+}
+
+@keyframes hero-text-fade-in {
+    to {
+        opacity: 1;
     }
 }
 
