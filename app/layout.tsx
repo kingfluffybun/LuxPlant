@@ -17,8 +17,8 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: 'My App',
-  description: 'My Next.js app',
+  title: 'LuxPlant',
+  description: 'LuxPlant',
 }
 
 export default function RootLayout({

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, User } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { useEffect, useRef, useState } from "react";
 import CartDrawer from "./CartDrawer";
 import "../../public/css/cart-drawer.css";
@@ -13,8 +14,21 @@ type NavigationProps = {
 
 export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
+  const [user, setUser] = useState<any>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const cartTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const supabase = createClient();
+
+//   Get user data from supabase
+  useEffect(() => {
+    const getUser = async () => {
+        const { data: {user}, error } = await supabase.auth.getUser();
+        setUser(user);
+    }
+
+    getUser();
+}, []);
 
   useEffect(() => {
     if (!transparentAtTop) {
@@ -49,7 +63,15 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
         <Link href="/#About">About</Link>
       </div>
       <div className="site-nav-icons">
-        <Link href="/login" aria-label="Account"> <User /> </Link>
+        {user ? (
+          <Link href="/account" aria-label="Account">
+            <User />
+          </Link>
+        ) : (
+          <Link href="/login" aria-label="Account">
+            <User />
+          </Link>
+        )}
         <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} > <ShoppingCart /> </button>
       </div>
       {isCartOpen && ( <CartDrawer triggerRef={cartTriggerRef} onClose={() => setIsCartOpen(false)} />
