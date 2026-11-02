@@ -186,33 +186,6 @@ export default function LuxPlantMiniPage() {
                     <h1>LuxPlant Mini</h1>
                     <form>
                         <fieldset className="product-options">
-                            <p>Select Option</p>
-                            <label className="product-option">
-                                <input type="radio" name="type" value="unit" required checked={selectedType === "unit"} onChange={() => setSelectedType("unit")} />
-                                <span className="radio">
-                                    <div className="product-option-price">
-                                        <div className="product-option-labels">
-                                            <b>Built Unit</b>
-                                            <span>Ready to plug in. Philippines only. Ships in about 2 to 3 days</span>
-                                        </div>
-                                        <b>₱3500</b>
-                                    </div>
-                                    <span className="circle" aria-hidden="true"><Check size={12}/></span>
-                                </span>
-                            </label>
-                            <label className="product-option">
-                                <input type="radio" name="type" value="stl" checked={selectedType === "stl"} onChange={() => setSelectedType("stl")} />
-                                <span className="radio">
-                                    <div className="product-option-price">
-                                        <div className="product-option-labels">
-                                            <b>Buy STL File</b>
-                                            <span>Print it yourself. Files and docs unlock on your account after purchase.</span>
-                                        </div>
-                                        <b>$5</b>
-                                    </div>
-                                    <span className="circle" aria-hidden="true"><Check size={12}/></span>
-                                </span>
-                            </label>
                             {selectedType === "unit" && <div className="product-quantity">
                                 <div className="product-quantity-label">
                                     <p>Quantity</p>
@@ -252,6 +225,33 @@ export default function LuxPlantMiniPage() {
                                     </div>
                                 </div>}
                             </div>}
+                            <p>Select Option</p>
+                            <label className="product-option">
+                                <input type="radio" name="type" value="unit" required checked={selectedType === "unit"} onChange={() => setSelectedType("unit")} />
+                                <span className="radio">
+                                    <div className="product-option-price">
+                                        <div className="product-option-labels">
+                                            <b>Built Unit</b>
+                                            <span>Ready to plug in. Philippines only. Ships in about 2 to 3 days</span>
+                                        </div>
+                                        <b>₱3500</b>
+                                    </div>
+                                    <span className="circle" aria-hidden="true"><Check size={12}/></span>
+                                </span>
+                            </label>
+                            <label className="product-option">
+                                <input type="radio" name="type" value="stl" checked={selectedType === "stl"} onChange={() => setSelectedType("stl")} />
+                                <span className="radio">
+                                    <div className="product-option-price">
+                                        <div className="product-option-labels">
+                                            <b>Buy STL File</b>
+                                            <span>Print it yourself. Files and docs unlock on your account after purchase.</span>
+                                        </div>
+                                        <b>$5</b>
+                                    </div>
+                                    <span className="circle" aria-hidden="true"><Check size={12}/></span>
+                                </span>
+                            </label>
                         </fieldset>
                         <div className="product-actions">
                             <button type="submit" className="link-button-primary">

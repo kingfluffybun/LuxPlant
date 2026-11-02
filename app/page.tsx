@@ -68,13 +68,13 @@ export default function Home() {
                                 <div className="icon circle"><MoveUpRight size={24} /></div>
                             </div>
                         </Link>
-                        <div className="image-placeholder" id="luxplant-standard">
+                        <Link href="/product/luxplant-standard" className="image-placeholder" id="luxplant-standard">
                             <Image src="/assets/plants/luxplant-standard-main.jpeg" width={400} height={400} alt="LuxPlant Standard" />
                             <div className="product-name">
                                 <h2>LuxPlant Standard</h2>
                                 <div className="icon circle"><MoveUpRight size={24} /></div>
-                            </div>
                         </div>
+                        </Link>
                     </div>
                 </section>
                 <section className="center-section">
