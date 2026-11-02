@@ -32,20 +32,20 @@ export default function SignupPage() {
                             <div className="register-name-fields">
                                 <div className="login-form-group">
                                     <label htmlFor="first-name">First name</label>
-                                    <input type="text" id="first-name" name="firstName" autoComplete="given-name" required placeholder="e.g. Alex" />
+                                    <input type="text" id="first-name" name="firstName" autoComplete="given-name" required placeholder="First name" />
                                 </div>
                                 <div className="login-form-group">
                                     <label htmlFor="last-name">Last name</label>
-                                    <input type="text" id="last-name" name="lastName" autoComplete="family-name" required placeholder="e.g. Morgan" />
+                                    <input type="text" id="last-name" name="lastName" autoComplete="family-name" required placeholder="Last name" />
                                 </div>
                             </div>
                             <div className="login-form-group">
                                 <label htmlFor="email">Email</label>
-                                <input type="email" id="email" name="email" autoComplete="email" required placeholder="alex@example.com" />
+                                <input type="email" id="email" name="email" autoComplete="email" required placeholder="Email" />
                             </div>
                             <div className="login-form-group">
                                 <label htmlFor="password">Password</label>
-                                <input type="password" id="password" name="password" autoComplete="new-password" required placeholder="Choose a password" />
+                                <input type="password" id="password" name="password" autoComplete="new-password" required placeholder="Password" />
                             </div>
                             <button type="submit" className="link-button-primary">
                                 Create account

@@ -19,11 +19,11 @@ export default function ResetPasswordPage() {
                         <form className="login-form">
                             <div className="login-form-group">
                                 <label htmlFor="new-password">New password</label>
-                                <input type="password" id="new-password" name="newPassword" autoComplete="new-password" required placeholder="Choose a new password" />
+                                <input type="password" id="new-password" name="newPassword" autoComplete="new-password" required placeholder="New password" />
                             </div>
                             <div className="login-form-group">
                                 <label htmlFor="confirm-password">Confirm new password</label>
-                                <input type="password" id="confirm-password" name="confirmPassword" autoComplete="new-password" required placeholder="Enter your new password again" />
+                                <input type="password" id="confirm-password" name="confirmPassword" autoComplete="new-password" required placeholder="Confirm new password" />
                             </div>
                             <button type="submit" className="link-button-primary">
                                 Reset password

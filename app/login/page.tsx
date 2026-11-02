@@ -32,11 +32,11 @@ export default function LoginPage() {
                             </div>
                             <div className="login-form-group">
                                 <label htmlFor="email">Email</label>
-                                <input type="email" id="email" name="email" autoComplete="email" required placeholder="alex@example.com"/>
+                                <input type="email" id="email" name="email" autoComplete="email" required placeholder="Email"/>
                             </div>
                             <div className="login-form-group">
                                 <label htmlFor="password">Password</label>
-                                <input type="password" id="password" name="password" autoComplete="current-password" required placeholder="Your password" />
+                                <input type="password" id="password" name="password" autoComplete="current-password" required placeholder="Password" />
                             </div>
                             <div className="login-remember-forgot">
                                 <div className="login-remember-me">

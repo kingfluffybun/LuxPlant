@@ -92,15 +92,44 @@
         border-radius: 8px;
     }
     .login-form-group {
+        position: relative;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        width: 100%;
+        label {
+            position: absolute;
+            top: 8px;
+            left: 16px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 250ms ease, transform 250ms ease;
+        }
+        input:not([type="checkbox"]) {
+            transition: padding 250ms ease;
+        }
+        &:has(input:not([type="checkbox"]):focus, input:not([type="checkbox"]):not(:placeholder-shown)) {
+            label {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            input:not([type="checkbox"]) {
+                padding-top: 20px;
+                padding-bottom: 4px;
+            }
+        }
+        &:has(input:not([type="checkbox"]):focus) input::placeholder {
+            color: transparent;
+        }
     }
     .login-remember-forgot {
+        margin: 8px 0;
         display: flex;
         justify-content: space-between;
         label, a {font-size: 1rem;}
-        div {display: flex; gap: 4px; align-items: center;}
+        div {display: flex; gap: 8px; align-items: center;}
         input[type=checkbox] {
             width: 16px; height: 16px;
             border-radius: 8px;

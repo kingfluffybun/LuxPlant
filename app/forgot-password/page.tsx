@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
                         <form className="login-form">
                             <div className="login-form-group">
                                 <label htmlFor="email">Email</label>
-                                <input type="email" id="email" name="email" autoComplete="email" required placeholder="alex@example.com" />
+                                <input type="email" id="email" name="email" autoComplete="email" required placeholder="Email" />
                             </div>
                             <button type="submit" className="link-button-primary">
                                 Send reset link
