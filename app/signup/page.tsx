@@ -97,7 +97,7 @@ export default function SignupPage() {
                                         name="firstName" 
                                         autoComplete="given-name" 
                                         required 
-                                        placeholder="e.g. Alex"
+                                        placeholder="First Name"
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
                                     />
@@ -110,7 +110,7 @@ export default function SignupPage() {
                                         name="lastName" 
                                         autoComplete="family-name" 
                                         required 
-                                        placeholder="e.g. Morgan"
+                                        placeholder="Last Name"
                                         value={lastName}
                                         onChange={(e) => setLastName(e.target.value)}
                                     />
@@ -124,7 +124,7 @@ export default function SignupPage() {
                                     name="email" 
                                     autoComplete="email" 
                                     required 
-                                    placeholder="alex@example.com"
+                                    placeholder="Email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -137,11 +137,11 @@ export default function SignupPage() {
                                     name="password" 
                                     autoComplete="new-password" 
                                     required 
-                                    placeholder="Choose a password"
+                                    placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <button 
+                                <button className="show-password-button"
                                     type="button" 
                                     onClick={() => setShowPassword(!showPassword)}
                                 >

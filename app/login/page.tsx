@@ -82,7 +82,7 @@ export default function LoginPage() {
                                     name="email" 
                                     autoComplete="email" 
                                     required 
-                                    placeholder="alex@example.com"
+                                    placeholder="Email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -95,11 +95,11 @@ export default function LoginPage() {
                                     name="password" 
                                     autoComplete="current-password" 
                                     required 
-                                    placeholder="Your password" 
+                                    placeholder="Password" 
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <button 
+                                <button className="show-password-button"
                                     type="button" 
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
