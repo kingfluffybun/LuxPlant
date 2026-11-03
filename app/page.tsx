@@ -10,8 +10,8 @@ import FaqSection from "./components/FaqSection";
 
 export default function Home() {
     return (
-        <div>
-            <main>
+        <div className="landing-page">
+            <main className="landing-page-main">
                 <Navigation transparentAtTop />
                 <div className="hero">
                     <video src="/assets/landing-page.mp4" autoPlay loop muted playsInline />
@@ -24,7 +24,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <section className="text-image-section">
+                <section className="text-image-section landing-page-section landing-page-section-secondary">
                     <div className="section-text">
                         <h1>Built out of a shipping problem</h1>
                         <p>This started as a gift — a Fluora LED Plant that couldn't ship to my country. 
@@ -36,7 +36,7 @@ export default function Home() {
                         <div className="image-placeholder"></div>
                     </div>
                 </section>
-                <section className="center-section">
+                <section className="center-section landing-page-section">
                     <div className="section-text">
                         <h1>Gallery</h1>
                         <p>Every LuxPlant glows a little differently. Here’s how it looks in real spaces.</p>
@@ -57,7 +57,7 @@ export default function Home() {
                     </div>
                     <Link href="/gallery" className="link-button-primary">View Full Gallery</Link>
                 </section>
-                <section className="center-section">
+                <section className="center-section landing-page-section landing-page-section-secondary">
                     <div className="section-text">
                         <h1>Two plants, one system - pick the one that fits your space</h1>
                     </div>
@@ -78,7 +78,7 @@ export default function Home() {
                         </Link>
                     </div>
                 </section>
-                <section className="center-section">
+                <section className="center-section landing-page-section">
                     <div className="section-text">
                         <h1>Built by one person, shaped by everyone who's tried it</h1>
                     </div>
@@ -106,7 +106,7 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
-                <section className="text-image-section">
+                <section className="text-image-section landing-page-section landing-page-section-secondary">
                     <div className="section-img">
                         <div className="image-placeholder"></div>
                     </div>
@@ -117,7 +117,7 @@ export default function Home() {
                     </div>
                 </section>
                 <FaqSection />
-                <section className="center-section" style={{ justifyContent: "center"}}>
+                <section className="center-section landing-page-section" style={{ justifyContent: "center"}}>
                     <div className="section-text">
                         <h1>Ready to bring your own LuxPlant to life?</h1>
                         <p>Bring home a ready-to-enjoy LuxPlant with glowing leaves, customizable colors, and app-based control. Choose the plant that fits your space and make it your own.</p>

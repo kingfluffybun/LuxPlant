@@ -43,7 +43,7 @@ export default function Footer() {
                         <li><Link href="/gallery">Gallery</Link></li>
                         <li><Link href="/#Docs">Docs</Link></li>
                         <li><Link href="/#App">App</Link></li>
-                        <li><Link href="/#About">About</Link></li>
+                        <li><Link href="/about">About</Link></li>
                     </ul>
                 </div>
                 <div className="site-footer-links">

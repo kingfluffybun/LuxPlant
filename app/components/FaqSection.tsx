@@ -102,7 +102,7 @@ export default function FaqSection() {
     const [openFaq, setOpenFaq] = useState<string | null>(null);
 
     return (
-        <section className="center-section faq-section">
+        <div className="faq-section">
             <div className="section-text">
                 <h1>Frequently Asked Questions</h1>
                 <p>Helpful details about LuxPlant, ordering, delivery, and support.</p>
@@ -120,6 +120,6 @@ export default function FaqSection() {
                     </ProductDropdown>
                 ))}
             </div>
-        </section>
+        </div>
     );
 }

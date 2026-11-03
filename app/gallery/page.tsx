@@ -18,7 +18,7 @@ export default function GalleryPage() {
         <div className="gallery-page-layout">
             <Navigation />
             <main className="gallery-page-main">
-                <section className="center-section gallery-page-section">
+                <div className="center-section gallery-page-section">
                     <div className="section-text">
                         <h1>Gallery</h1>
                         <p>Every LuxPlant glows a little differently. Here’s how it looks in real spaces.</p>
@@ -42,7 +42,7 @@ export default function GalleryPage() {
                             </div>
                         ))}
                     </div>
-                </section>
+                </div>
             </main>
             <FaqSection />
             <Footer />

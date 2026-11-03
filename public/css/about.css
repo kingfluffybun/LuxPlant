@@ -1,0 +1,102 @@
+.about-page-layout {
+    display: grid;
+    grid-template-areas:
+        "nav"
+        "main"
+        "footer";
+    grid-template-rows: 80px minmax(0, 1fr) auto;
+    min-height: 100vh;
+}
+
+.about-page-layout > .site-nav {
+    position: relative;
+    grid-area: nav;
+}
+
+.about-page-main {
+    grid-area: main;
+    width: min(100%, 900px);
+    margin: 0 auto;
+    padding: 80px 24px;
+    text-align: left;
+}
+
+.about-intro {
+    max-width: 760px;
+    margin: 0 0 32px;
+    padding: 24px 0;
+    text-align: left;
+}
+
+.about-intro h1 {
+    max-width: 100%;
+    margin: 0 0 24px;
+    font-size: 4rem;
+}
+
+.about-intro > p,
+.about-section-copy p,
+.about-process > p,
+.about-next > p,
+.about-warranty > p {
+    margin: 0;
+    max-width: 68ch;
+    color: var(--text-body);
+    font-size: 1.25rem;
+    line-height: 1.7;
+}
+
+.about-story,
+.about-independent,
+.about-process,
+.about-next,
+.about-warranty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 32px 0;
+    text-align: left;
+}
+
+.about-section-heading h2,
+.about-process h2,
+.about-next h2,
+.about-warranty h2,
+.about-cta h2 {
+    margin-top: 0;
+    font-size: 2rem;
+}
+
+.about-section-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.about-process,
+.about-next,
+.about-warranty {
+    margin-top: 0;
+}
+
+.about-independent {
+    margin-top: 0;
+}
+
+.about-cta {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding: 48px 0 24px;
+    text-align: left;
+}
+
+.about-cta .link-button-primary {
+    flex: 0 0 auto;
+}
+
+.about-page-layout > .site-footer {
+    grid-area: footer;
+}

@@ -23,7 +23,12 @@
 }
 
 .gallery-page-section {
+    display: flex;
+    width: 100%;
     min-height: 0;
+    height: fit-content;
+    padding: 80px max(24px, calc((100% - 1200px) / 2));
+    gap: 48px;
 }
 
 .gallery-page-layout > .site-footer {
