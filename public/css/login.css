@@ -175,3 +175,51 @@
     color: var(--text-muted);
     cursor: pointer;
 }
+
+/* Password Strength Meter Styles */
+.password-strength-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.password-strength-meter {
+    flex: 1;
+    height: 8px;
+    background-color: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.password-strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: all 300ms ease;
+}
+
+.password-strength-bar-empty {
+    background-color: var(--border);
+}
+
+.strength-text {
+    font-size: 0.875rem;
+    color: var(--text-main);
+}
+
+.strength-hints {
+    list-style: none;
+    margin: 8px 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.strength-hints li {
+    color: var(--primary);
+}
