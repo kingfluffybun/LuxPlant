@@ -15,6 +15,7 @@ type NavigationProps = {
 export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
   const [user, setUser] = useState<any>(null);
+  const [userData, setUserData] = useState<any>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const cartTriggerRef = useRef<HTMLButtonElement>(null);
 
@@ -25,6 +26,17 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
     const getUser = async () => {
         const { data: {user}, error } = await supabase.auth.getUser();
         setUser(user);
+
+        const metadata = user?.user_metadata;
+
+        const avatarUrl = metadata?.avatar_url || null;
+
+        setUserData({
+            firstName: metadata?.first_name || "",
+            lastName: metadata?.last_name || "",
+            email: user?.email || "",
+            avatarUrl: avatarUrl,
+        });
     }
 
     getUser();
@@ -65,7 +77,8 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       <div className="site-nav-icons">
         {user ? (
           <Link href="/account" aria-label="Account">
-            <User />
+            <Image src={userData?.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
+            {/* <User /> */}
           </Link>
         ) : (
           <Link href="/login" aria-label="Account">
