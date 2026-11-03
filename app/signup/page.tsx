@@ -6,7 +6,6 @@ import "../../public/css/footer.css";
 
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "../components/Footer";
@@ -14,7 +13,6 @@ import Navigation from "../components/Navigation";
 import { createClient } from "../../lib/supabase/client";
 
 export default function SignupPage() {
-  const router = useRouter();
   const supabase = createClient();
 
   const [firstName, setFirstName] = useState("");
@@ -39,11 +37,16 @@ export default function SignupPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { first_name: firstName, last_name: lastName, role: "member" },
+          data: { 
+            first_name: firstName, 
+            last_name: lastName, 
+            role: "member",
+          },
+          emailRedirectTo: `${window.location.origin}/login`,
         },
       });
       if (error) throw error;
