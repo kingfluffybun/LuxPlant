@@ -1,19 +1,30 @@
+"use client";
+
 import "../public/css/landing-page.css";
 import "../public/css/navigation.css";
 import "../public/css/footer.css";
 import Link from "next/link";
 import Image from "next/image";
-import {MoveUpRight} from "lucide-react"
+import { Eye, EyeOff, MoveUpRight } from "lucide-react";
+import { useState } from "react";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import FaqSection from "./components/FaqSection";
 
 export default function Home() {
+    const [isHeroTextVisible, setIsHeroTextVisible] = useState(true);
+    const [hasToggledHeroText, setHasToggledHeroText] = useState(false);
+
+    function toggleHeroText() {
+        setHasToggledHeroText(true);
+        setIsHeroTextVisible((visible) => !visible);
+    }
+
     return (
         <div className="landing-page">
             <main className="landing-page-main">
                 <Navigation transparentAtTop />
-                <div className="hero">
+                <div className={`hero${hasToggledHeroText ? " hero-text-toggle-active" : ""}${!isHeroTextVisible ? " hero-text-hidden" : ""}`}>
                     <video src="/assets/landing-page.mp4" autoPlay loop muted playsInline />
                     <div className="hero-text">
                         <h1>A plant that grows in color, powered by light</h1>
@@ -23,6 +34,15 @@ export default function Home() {
                             <Link href={"/"} className="link-button-secondary">Learn More</Link>
                         </div>
                     </div>
+                    <button
+                        type="button"
+                        className="toggle-hero-text"
+                        aria-label={isHeroTextVisible ? "Hide hero text" : "Show hero text"}
+                        aria-pressed={!isHeroTextVisible}
+                        onClick={toggleHeroText}
+                    >
+                        {isHeroTextVisible ? <EyeOff size={24} aria-hidden="true" /> : <Eye size={24} aria-hidden="true" />}
+                    </button>
                 </div>
                 <section className="text-image-section landing-page-section landing-page-section-secondary">
                     <div className="section-text">

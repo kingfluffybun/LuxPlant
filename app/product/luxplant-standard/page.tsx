@@ -192,8 +192,8 @@ export default function LuxPlantStandardPage() {
                 </div>
                 <div className="product-details">
                     <div className="standard-product-intro">
-                        <span className="standard-product-status">Coming Soon</span>
                         <h1>LuxPlant Standard</h1>
+                        <span className="standard-product-status">Coming Soon</span>
                         <p>
                             The larger LuxPlant is in development, with 21 leaves and thicker
                             stems planned for its branches.

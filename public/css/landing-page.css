@@ -12,7 +12,12 @@
         background-color: rgba(0,0,0,.25);
         height: 100%;
         width: 100%;
+        transition: background-color 400ms ease;
     }
+}
+
+.hero.hero-text-hidden::after {
+    background-color: transparent;
 }
 
 .hero-text {
@@ -37,6 +42,41 @@
             font-size: 1.5rem;
         }
     }
+}
+
+.hero.hero-text-toggle-active .hero-text {
+    animation: none;
+    opacity: 1;
+    transition: opacity 400ms ease;
+}
+
+.hero.hero-text-toggle-active.hero-text-hidden .hero-text {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toggle-hero-text {
+    position: absolute;
+    z-index: 2;
+    bottom: 48px;
+    right: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--text-muted);
+    border-radius: 999px;
+    background-color: var(--secondary-background-transparent);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background-color 200ms ease, border-color 200ms ease;
+    svg {color: white;}
+}
+
+.toggle-hero-text:hover {
+    border-color: var(--text-main);
+    background-color: var(--nav-footer);
 }
 
 .site-nav-hero-animation {
