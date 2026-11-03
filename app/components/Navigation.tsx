@@ -91,7 +91,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
         )}
         <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} > <ShoppingCart /> </button>
       </div>
-      {isCartOpen && ( <CartDrawer triggerRef={cartTriggerRef} onClose={() => setIsCartOpen(false)} />
+      {isCartOpen && ( <CartDrawer triggerRef={cartTriggerRef} isLoggedIn={Boolean(user)} onClose={() => setIsCartOpen(false)} />
       )}
     </nav>
   );

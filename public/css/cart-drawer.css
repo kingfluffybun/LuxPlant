@@ -60,6 +60,10 @@
     animation: cart-drawer-width-out 250ms ease both;
 }
 
+.cart-drawer-container.is-closing .cart-drawer-close {
+    display: none;
+}
+
 .cart-drawer-header {
     display: flex;
     align-items: center;

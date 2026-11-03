@@ -7,10 +7,11 @@ import Link from "next/link";
 
 type CartDrawerProps = {
     onClose: () => void;
+    isLoggedIn: boolean;
     triggerRef: RefObject<HTMLButtonElement | null>;
 };
 
-export default function CartDrawer({ onClose, triggerRef }: CartDrawerProps) {
+export default function CartDrawer({ onClose, isLoggedIn, triggerRef }: CartDrawerProps) {
     const [isClosing, setIsClosing] = useState(false);
     const isClosingRef = useRef(false);
     const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -100,10 +101,12 @@ export default function CartDrawer({ onClose, triggerRef }: CartDrawerProps) {
                 <div className="cart-drawer-content">
                     <h3>Your cart is empty.</h3>
                     <Link href="/product/luxplant-mini" className="link-button-primary" onClick={onClose}>Continue shopping</Link>
-                    <div className="cart-drawer-login">
-                        <b>Have an account?</b>
-                        <p><Link href="/login" onClick={onClose}>Log in</Link> to checkout faster.</p>
-                    </div>
+                    {!isLoggedIn && (
+                        <div className="cart-drawer-login">
+                            <b>Have an account?</b>
+                            <p><Link href="/login" onClick={onClose}>Log in</Link> to checkout faster.</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>,

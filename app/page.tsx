@@ -117,7 +117,7 @@ export default function Home() {
                     </div>
                 </section>
                 <FaqSection />
-                <section className="center-section landing-page-section" style={{ justifyContent: "center"}}>
+                <section className="center-section landing-page-section landing-page-section-secondary" style={{ justifyContent: "center"}}>
                     <div className="section-text">
                         <h1>Ready to bring your own LuxPlant to life?</h1>
                         <p>Bring home a ready-to-enjoy LuxPlant with glowing leaves, customizable colors, and app-based control. Choose the plant that fits your space and make it your own.</p>
