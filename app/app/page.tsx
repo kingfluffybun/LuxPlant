@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 type Tab = "color" | "fx" | "pal" | "presets" | "more";
 type Connection = "demo" | "live" | "offline";
 type Slot = [string, string, string];
+type HSV = [number, number, number];
 
 type Segment = {id: number; name: string; start: number; stop: number; on: boolean; colors: Slot; effect: number; palette: number; speed: number; intensity: number};
 
@@ -120,7 +121,7 @@ function rgbToHex(r: number, g: number, b: number) {
     return "#" + [r, g, b].map((n) => Math.round(n).toString(16).padStart(2, "0")).join("");
 }
 
-function hexToHsv(hex: string): [number, number, number] {
+function hexToHsv(hex: string): HSV {
     const [r, g, b] = hexToRgb(hex).map((n) => n / 255);
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
@@ -207,11 +208,10 @@ type SliderProps = {
     min?: number;
     max?: number;
     display?: string;
-    track?: string;
     onChange: (value: number) => void;
 };
 
-function Slider({ id, label, value, min = 0, max = 255, display, track, onChange }: SliderProps) {
+function Slider({ id, label, value, min = 0, max = 255, display, onChange }: SliderProps) {
     const filled = ((value - min) / (max - min)) * 100;
 
     return (
@@ -226,8 +226,8 @@ function Slider({ id, label, value, min = 0, max = 255, display, track, onChange
                 min={min}
                 max={max}
                 value={value}
-                className={cx("slider-input", !!track && "custom")}
-                style={{ "--percent": `${filled}%`, "--track": track } as React.CSSProperties}
+                className="slider-input"
+                style={{ "--percent": `${filled}%` } as React.CSSProperties}
                 onChange={(event) => onChange(Number(event.target.value))}
             />
         </div>
@@ -241,6 +241,165 @@ function Switch({ on, label, onClick }: SwitchProps) {
         <button className={cx("switch", on && "on")} onClick={onClick} role="switch" aria-checked={on} aria-label={label}>
             <span />
         </button>
+    );
+}
+
+type NumFieldProps = { label: string; value: number; max: number; onChange: (value: number) => void; onCommit: () => void };
+
+function NumField({ label, value, max, onChange, onCommit }: NumFieldProps) {
+    const [draft, setDraft] = useState(String(value));
+
+    useEffect(() => setDraft(String(value)), [value]);
+
+    const type = (raw: string) => {
+        const digits = raw.replace(/\D/g, "").slice(0, 3);
+        setDraft(digits);
+        if (digits) onChange(Math.min(max, Number(digits)));
+    };
+
+    return (
+        <label className="num-field">
+            <input
+                inputMode="numeric"
+                value={draft}
+                onFocus={(event) => event.target.select()}
+                onChange={(event) => type(event.target.value)}
+                onBlur={() => { setDraft(String(value)); onCommit(); }}
+                onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
+            />
+            <span>{label}</span>
+        </label>
+    );
+}
+
+type PickerProps = { value: string; onChange: (hex: string) => void; onCommit: (hex: string) => void };
+
+function ColorPicker({ value, onChange, onCommit }: PickerProps) {
+    const [hsv, setHsv] = useState<HSV>(() => hexToHsv(value));
+    const [draft, setDraft] = useState(value.slice(1).toUpperCase());
+    const wheel = useRef<HTMLDivElement>(null);
+    const dragging = useRef(false);
+    const [h, s, v] = hsv;
+    const current = hsvToHex(h, s, v);
+    const radians = (h * Math.PI) / 180;
+
+    // Sync when the color changes from outside (recent colors, switching leaf or slot).
+    // Local HSV wins if it already gives the same hex, so the hue doesn't reset when brightness hits 0.
+    useEffect(() => {
+        setHsv((now) => (hsvToHex(...now) === value ? now : hexToHsv(value)));
+        setDraft(value.slice(1).toUpperCase());
+    }, [value]);
+
+    const update = (next: HSV) => {
+        setHsv(next);
+        onChange(hsvToHex(...next));
+    };
+
+    const commit = () => onCommit(current);
+
+    const pick = (event: React.PointerEvent) => {
+        const rect = wheel.current?.getBoundingClientRect();
+        if (!rect) return;
+
+        const x = event.clientX - rect.left - rect.width / 2;
+        const y = event.clientY - rect.top - rect.height / 2;
+        const angle = (Math.atan2(y, x) * 180) / Math.PI + 90;
+
+        update([(angle + 360) % 360, Math.min(Math.hypot(x, y) / (rect.width / 2), 1), v]);
+    };
+
+    const nudge = (event: React.KeyboardEvent) => {
+        const step = event.shiftKey ? 10 : 2;
+        const moves: Record<string, [number, number]> = {
+            ArrowRight: [step, 0],
+            ArrowLeft: [-step, 0],
+            ArrowUp: [0, step / 100],
+            ArrowDown: [0, -step / 100],
+        };
+        const move = moves[event.key];
+        if (!move) return;
+
+        event.preventDefault();
+        update([(h + move[0] + 360) % 360, Math.min(1, Math.max(0, s + move[1])), v]);
+    };
+
+    const typeHex = (raw: string) => {
+        const clean = raw.replace(/[^0-9a-f]/gi, "").slice(0, 6).toUpperCase();
+        setDraft(clean);
+
+        if (clean.length === 6) {
+            setHsv(hexToHsv(`#${clean}`));
+            onChange(`#${clean.toLowerCase()}`);
+        }
+    };
+
+    const commitHex = () => {
+        const clean = (draft.length === 3 ? [...draft].map((char) => char + char).join("") : draft).toLowerCase();
+
+        if (clean.length !== 6) {
+            setDraft(value.slice(1).toUpperCase()); // invalid code -> back to the last good one
+            return;
+        }
+
+        setHsv(hexToHsv(`#${clean}`));
+        setDraft(clean.toUpperCase());
+        onChange(`#${clean}`);
+        onCommit(`#${clean}`);
+    };
+
+    return (
+        <div className="picker">
+            <div className="picker-top">
+                <span className="picker-preview" style={{ background: current }} aria-hidden="true" />
+                <label className="hex-field">
+                    <span aria-hidden="true">#</span>
+                    <input
+                        value={draft}
+                        maxLength={7}
+                        spellCheck={false}
+                        autoCapitalize="characters"
+                        aria-label="Hex color code"
+                        placeholder="FF5D8F"
+                        onChange={(event) => typeHex(event.target.value)}
+                        onBlur={commitHex}
+                        onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
+                    />
+                </label>
+            </div>
+
+            <div
+                ref={wheel}
+                className="wheel"
+                role="slider"
+                tabIndex={0}
+                aria-label="Color wheel"
+                aria-valuetext={`Hue ${Math.round(h)}°, saturation ${Math.round(s * 100)}%`}
+                aria-valuenow={Math.round(h)}
+                aria-valuemin={0}
+                aria-valuemax={360}
+                onPointerDown={(event) => {
+                    dragging.current = true;
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                    pick(event);
+                }}
+                onPointerMove={(event) => dragging.current && pick(event)}
+                onPointerUp={() => {
+                    dragging.current = false;
+                    commit();
+                }}
+                onPointerCancel={() => { dragging.current = false; }}
+                onKeyDown={nudge}
+            >
+                <span className="wheel-shade" style={{ opacity: 1 - v }} />
+                <span className="wheel-thumb" style={{ left: `${50 + Math.sin(radians) * s * 50}%`, top: `${50 - Math.cos(radians) * s * 50}%`, background: current }} />
+            </div>
+
+            <div className="hsv">
+                <NumField label="H" max={360} value={Math.round(h)} onChange={(n) => update([n, s, v])} onCommit={commit} />
+                <NumField label="S" max={100} value={Math.round(s * 100)} onChange={(n) => update([h, n / 100, v])} onCommit={commit} />
+                <NumField label="B" max={100} value={Math.round(v * 100)} onChange={(n) => update([h, s, n / 100])} onCommit={commit} />
+            </div>
+        </div>
     );
 }
 
@@ -259,6 +418,7 @@ export default function App() {
     const [effectCatalog, setEffectCatalog] = useState<Effect[]>(effects);
     const [paletteCatalog, setPaletteCatalog] = useState<Palette[]>(palettes);
     const [slot, setSlot] = useState(0);
+    const [recent, setRecent] = useState<string[]>(quickColors);
 
     const [tab, setTab] = useState<Tab>("color");
     const [search, setSearch] = useState("");
@@ -284,7 +444,6 @@ export default function App() {
     const firstPush = useRef(true);
 
     const leaf = segments[Math.min(...selection)] ?? segments[0];
-    const [hue, saturation] = hexToHsv(leaf.colors[slot]);
     const allSelected = selection.length === segments.length;
     const activeEffect = effectCatalog.find((effect) => effect.id === leaf.effect);
     const activePalette = paletteCatalog.find((palette) => palette.id === leaf.palette);
@@ -432,6 +591,10 @@ export default function App() {
         );
     };
 
+    const commitRecent = (hex: string) => {
+        setRecent((current) => [hex, ...current.filter((color) => color !== hex)].slice(0, 8));
+    };
+
     const applyPreset = (preset: Preset) => {
         setSegments((current) => current.map((segment) => ({ ...segment, effect: preset.effect, palette: preset.palette })));
         setActivePreset(preset.id);
@@ -555,30 +718,24 @@ export default function App() {
                     ))}
                 </div>
 
-                <Slider
-                    id="hue"
-                    label="Hue"
-                    value={Math.round(hue)}
-                    min={0}
-                    max={360}
-                    display={`${Math.round(hue)}°`}
-                    track="linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"
-                    onChange={(value) => setSlotColor(hsvToHex(value, Math.max(saturation, 0.05), 1))}
-                />
-                <Slider
-                    id="sat"
-                    label="Saturation"
-                    value={Math.round(saturation * 100)}
-                    min={0}
-                    max={100}
-                    track={`linear-gradient(90deg,#fff,${hsvToHex(hue, 1, 1)})`}
-                    onChange={(value) => setSlotColor(hsvToHex(hue, value / 100, 1))}
-                />
+                <ColorPicker value={leaf.colors[slot]} onChange={setSlotColor} onCommit={commitRecent} />
 
-                <div className="swatches">
-                    {quickColors.map((color) => (
-                        <button key={color} className="swatch" style={{ background: color }} aria-label={`Use ${color}`} onClick={() => setSlotColor(color)} />
-                    ))}
+                <div className="recent">
+                    <small>Recent colors</small>
+                    <div className="swatches">
+                        {recent.map((color) => (
+                            <button
+                                key={color}
+                                className="swatch"
+                                style={{ background: color }}
+                                aria-label={`Use ${color}`}
+                                onClick={() => {
+                                    setSlotColor(color);
+                                    commitRecent(color);
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 

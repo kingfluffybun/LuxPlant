@@ -465,9 +465,6 @@ body {
     );
     box-shadow: inset 0 2px 4px hsl(0 0% 0% / 0.45), inset 0 -1px 0 var(--border);
 
-    &.custom {
-      background: var(--track);
-    }
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       box-sizing: border-box;
@@ -536,7 +533,7 @@ body {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
     gap: 8px;
-    margin-top: 24px;
+    margin-top: 12px;
   }
   .swatch {
     aspect-ratio: 1;
@@ -552,6 +549,155 @@ body {
     }
     &:active {
       transform: scale(0.9);
+    }
+  }
+
+  /* color picker */
+
+  .picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 16px;
+  }
+  .picker-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .picker-preview {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-main) 20%, transparent), 0 4px 16px hsl(0 0% 0% / 0.35);
+    transition: background 80ms linear;
+  }
+  .hex-field {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: var(--background);
+    box-shadow: inset 0 2px 4px hsl(0 0% 0% / 0.45), inset 0 -1px 0 var(--border);
+    color: var(--text-main);
+    transition: border-color 150ms ease;
+
+    span {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    input {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      outline: none;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    input::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    &:focus-within {
+      border-color: color-mix(in srgb, var(--primary) 70%, transparent);
+    }
+  }
+
+  .wheel {
+    position: relative;
+    width: min(100%, 232px);
+    aspect-ratio: 1;
+    margin-top: 24px;
+    border-radius: 50%;
+    cursor: crosshair;
+    touch-action: none;
+    background:
+      radial-gradient(circle closest-side, #fff, rgba(255, 255, 255, 0)),
+      conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--text-main) 10%, transparent), 0 8px 24px hsl(0 0% 0% / 0.45);
+
+    &:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--primary) 75%, white);
+      outline-offset: 6px;
+    }
+  }
+  .wheel-shade {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #000;
+    pointer-events: none;
+  }
+  .wheel-thumb {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 0 1px hsl(0 0% 0% / 0.35), 0 2px 8px hsl(0 0% 0% / 0.5);
+  }
+
+  .hsv {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    margin-top: 24px;
+  }
+  .num-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 8px;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      background: var(--background);
+      box-shadow: inset 0 2px 4px hsl(0 0% 0% / 0.45), inset 0 -1px 0 var(--border);
+      color: var(--text-main);
+      font-size: 1rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      outline: none;
+      transition: border-color 150ms ease;
+
+      &:focus {
+        border-color: color-mix(in srgb, var(--primary) 70%, transparent);
+      }
+    }
+    span {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+
+  .recent {
+    margin-top: 24px;
+
+    small {
+      display: block;
     }
   }
 
