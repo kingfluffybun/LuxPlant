@@ -10,10 +10,9 @@ import "../../public/css/cart-drawer.css";
 
 type NavigationProps = {
   transparentAtTop?: boolean;
-  heroVideoPlaying?: boolean;
 };
 
-export default function Navigation({ transparentAtTop = false, heroVideoPlaying = false }: NavigationProps) {
+export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
   const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
@@ -93,7 +92,7 @@ export default function Navigation({ transparentAtTop = false, heroVideoPlaying 
   const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
 
   return (
-    <nav className={`site-nav ${isNavTransparent ? "site-nav-transparent" : "site-nav-solid"}${transparentAtTop ? ` site-nav-hero-animation${heroVideoPlaying ? " site-nav-hero-video-playing" : ""}` : ""}${isOverHeroWithTransparentBehavior ? " site-nav-no-background-transition" : ""}`}>
+    <nav className={`site-nav ${isNavTransparent ? "site-nav-transparent" : "site-nav-solid"}${transparentAtTop ? " site-nav-hero-animation" : ""}${isOverHeroWithTransparentBehavior ? " site-nav-no-background-transition" : ""}`}>
       <Link href={"/"} className="site-nav-logo">
         <Image src="/assets/logo/logo-white.png" width={160} height={40} alt="LuxPlant Logo" />
       </Link>

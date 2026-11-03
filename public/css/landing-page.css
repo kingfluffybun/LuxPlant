@@ -22,6 +22,7 @@
 
 .hero-text {
     opacity: 0;
+    animation: hero-text-fade-in 1800ms ease 1600ms forwards;
     max-width: 1200px;
     display: flex;
     flex-direction: column;
@@ -41,10 +42,6 @@
             font-size: 1.5rem;
         }
     }
-}
-
-.hero.hero-video-playing .hero-text {
-    animation: hero-text-fade-in 1800ms ease 1600ms forwards;
 }
 
 .hero.hero-text-toggle-active .hero-text {
@@ -84,9 +81,6 @@
 
 .site-nav-hero-animation {
     opacity: 0;
-}
-
-.site-nav-hero-animation.site-nav-hero-video-playing {
     animation: hero-text-fade-in 1800ms ease 1600ms forwards;
 }
 
