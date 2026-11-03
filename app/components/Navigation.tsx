@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, User } from "lucide-react";
+import { ArrowUpRight, ChevronDown, ShoppingCart, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useRef, useState } from "react";
 import CartDrawer from "./CartDrawer";
@@ -17,7 +17,9 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
   const cartTriggerRef = useRef<HTMLButtonElement>(null);
+  const productMenuRef = useRef<HTMLDivElement>(null);
 
   const supabase = createClient();
 
@@ -62,13 +64,93 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
     };
   }, [transparentAtTop]);
 
+  useEffect(() => {
+    if (!isProductMenuOpen) {
+      return;
+    }
+
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (event.target instanceof Node && !productMenuRef.current?.contains(event.target)) {
+        setIsProductMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsProductMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isProductMenuOpen]);
+
+  const isNavTransparent = isOverHero && !isProductMenuOpen;
+  const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
+
   return (
-    <nav className={`site-nav ${isOverHero ? "site-nav-transparent" : "site-nav-solid"}${transparentAtTop ? " site-nav-hero-animation" : ""}`}>
+    <nav className={`site-nav ${isNavTransparent ? "site-nav-transparent" : "site-nav-solid"}${transparentAtTop ? " site-nav-hero-animation" : ""}${isOverHeroWithTransparentBehavior ? " site-nav-no-background-transition" : ""}`}>
       <Link href={"/"} className="site-nav-logo">
         <Image src="/assets/logo/logo-white.png" width={160} height={40} alt="LuxPlant Logo" />
       </Link>
       <div className="site-nav-links">
-        <Link href="/#Product">Product</Link>
+        <div className="site-nav-product" ref={productMenuRef}>
+          <button
+            type="button"
+            className="site-nav-product-trigger"
+            aria-expanded={isProductMenuOpen}
+            aria-controls="site-nav-product-menu"
+            onClick={() => setIsProductMenuOpen((isOpen) => !isOpen)}
+          >
+            Product <ChevronDown size={16} aria-hidden="true" />
+          </button>
+          {isProductMenuOpen && (
+            <div className="site-nav-product-menu" id="site-nav-product-menu">
+              <Link
+                href="/product/luxplant-mini"
+                className="site-nav-product-card"
+                onClick={() => setIsProductMenuOpen(false)}
+              >
+                <span className="site-nav-product-image">
+                  <Image src="/assets/plants/luxplant-mini-primary-1.jpeg" alt="" fill sizes="(max-width: 700px) 100vw, 30vw" />
+                  <span className="site-nav-product-arrow"><ArrowUpRight size={20} aria-hidden="true" /></span>
+                </span>
+                <span className="site-nav-product-info">
+                  <span className="site-nav-product-title">LuxPlant Mini</span>
+                  <span className="site-nav-product-description">A fully built, color-changing plant.</span>
+                  <span className="site-nav-product-price">₱3,500</span>
+                </span>
+              </Link>
+              <Link
+                href="/product/luxplant-standard"
+                className="site-nav-product-card"
+                onClick={() => setIsProductMenuOpen(false)}
+              >
+                <span className="site-nav-product-image">
+                  <Image src="/assets/plants/luxplant-standard-main.jpeg" alt="" fill sizes="(max-width: 700px) 100vw, 30vw" />
+                  <span className="site-nav-product-arrow"><ArrowUpRight size={20} aria-hidden="true" /></span>
+                </span>
+                <span className="site-nav-product-info">
+                  <span className="site-nav-product-title">LuxPlant Standard</span>
+                  <span className="site-nav-product-description">A larger design with 21 leaves, in development.</span>
+                  <span className="site-nav-product-price">Coming soon</span>
+                </span>
+              </Link>
+              <div className="site-nav-product-feature">
+                <Image src="/assets/plants/plant-10.jpg" alt="" fill sizes="(max-width: 700px) 100vw, 40vw" />
+                <div className="site-nav-product-feature-copy">
+                  <h2>Make your space glow with LuxPlant.</h2>
+                  <Link href="/gallery" className="link-button-primary" onClick={() => setIsProductMenuOpen(false)}>
+                    Explore the gallery <ArrowUpRight size={18} aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
         <Link href="/gallery">Gallery</Link>
         <Link href="/#Docs">Docs</Link>
         <Link href="/#App">App</Link>
