@@ -54,7 +54,7 @@ export default function Home() {
                             <Image src="/assets/plants/plant-6.png" width={400} height={400} alt="LuxPlant Gallery Image 6" />
                         </div>
                     </div>
-                    <Link href={"/"} className="link-button-primary">View Full Gallery</Link>
+                    <Link href="/gallery" className="link-button-primary">View Full Gallery</Link>
                 </section>
                 <section className="center-section">
                     <div className="section-text">

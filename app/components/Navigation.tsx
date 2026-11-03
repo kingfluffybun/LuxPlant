@@ -69,7 +69,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       </Link>
       <div className="site-nav-links">
         <Link href="/#Product">Product</Link>
-        <Link href="/#Gallery">Gallery</Link>
+        <Link href="/gallery">Gallery</Link>
         <Link href="/#Docs">Docs</Link>
         <Link href="/#App">App</Link>
         <Link href="/#About">About</Link>

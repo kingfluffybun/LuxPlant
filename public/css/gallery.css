@@ -1,0 +1,26 @@
+.gallery-page-layout {
+    display: grid;
+    grid-template-areas:
+        "nav"
+        "main"
+        "footer";
+    grid-template-rows: 80px minmax(0, 1fr) auto;
+    min-height: 100vh;
+}
+
+.gallery-page-layout > .site-nav {
+    position: relative;
+    grid-area: nav;
+}
+
+.gallery-page-main {
+    grid-area: main;
+}
+
+.gallery-page-section {
+    min-height: 0;
+}
+
+.gallery-page-layout > .site-footer {
+    grid-area: footer;
+}
