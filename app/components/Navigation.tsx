@@ -79,10 +79,25 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
           <Link href="/account" aria-label="Account">
             { userData?.avatarUrl ? (
                 <Image src={userData?.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
+            ) : userData?.firstName && userData?.lastName ? (
+                <span 
+                    className="user-avatar initials-avatar"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        width: '32px',
+                        height: '32px'
+                    }}
+                >
+                    {userData.firstName.charAt(0)}{userData.lastName.charAt(0).toUpperCase()}
+                </span>
             ) : (
                 <User />
-            )
-            }
+            )}
           </Link>
         ) : (
           <Link href="/login" aria-label="Account">
