@@ -77,8 +77,12 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       <div className="site-nav-icons">
         {user ? (
           <Link href="/account" aria-label="Account">
-            <Image src={userData?.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
-            {/* <User /> */}
+            { userData?.avatarUrl ? (
+                <Image src={userData?.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
+            ) : (
+                <User />
+            )
+            }
           </Link>
         ) : (
           <Link href="/login" aria-label="Account">
