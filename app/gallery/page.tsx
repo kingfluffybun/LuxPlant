@@ -5,6 +5,7 @@ import "../../public/css/gallery.css";
 import Image from "next/image";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import FaqSection from "../components/FaqSection";
 
 const galleryColumns = [
     [1, 4, 7, 10],
@@ -43,6 +44,7 @@ export default function GalleryPage() {
                     </div>
                 </section>
             </main>
+            <FaqSection />
             <Footer />
         </div>
     );

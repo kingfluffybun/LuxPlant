@@ -4,6 +4,7 @@ import "../../../public/css/navigation.css";
 import "../../../public/css/footer.css";
 import "../../../public/css/product.css";
 import Footer from "../../components/Footer";
+import FaqSection from "../../components/FaqSection";
 import Navigation from "../../components/Navigation";
 import ProductDropdown from "../luxplant-mini/ProductDropdown";
 import Image from "next/image";
@@ -228,6 +229,7 @@ export default function LuxPlantStandardPage() {
                     </Link>
                 </div>
             </main>
+            <FaqSection />
             <Footer />
         </div>
     );

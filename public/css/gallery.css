@@ -3,8 +3,9 @@
     grid-template-areas:
         "nav"
         "main"
+        "faq"
         "footer";
-    grid-template-rows: 80px minmax(0, 1fr) auto;
+    grid-template-rows: 80px minmax(0, 1fr) auto auto;
     min-height: 100vh;
 }
 
@@ -15,6 +16,10 @@
 
 .gallery-page-main {
     grid-area: main;
+}
+
+.gallery-page-layout > .faq-section {
+    grid-area: faq;
 }
 
 .gallery-page-section {

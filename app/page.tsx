@@ -6,6 +6,7 @@ import Image from "next/image";
 import {MoveUpRight} from "lucide-react"
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import FaqSection from "./components/FaqSection";
 
 export default function Home() {
     return (
@@ -115,6 +116,7 @@ export default function Home() {
                         <Link href={"/"} className="link-button-primary">Download the App</Link>
                     </div>
                 </section>
+                <FaqSection />
                 <section className="center-section" style={{ justifyContent: "center"}}>
                     <div className="section-text">
                         <h1>Ready to bring your own LuxPlant to life?</h1>

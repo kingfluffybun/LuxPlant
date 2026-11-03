@@ -4,6 +4,7 @@ import "../../../public/css/navigation.css";
 import "../../../public/css/footer.css";
 import "../../../public/css/product.css";
 import Footer from "../../components/Footer";
+import FaqSection from "../../components/FaqSection";
 import Navigation from "../../components/Navigation";
 import ProductDropdown from "./ProductDropdown";
 import Image from "next/image";
@@ -300,7 +301,7 @@ export default function LuxPlantMiniPage() {
                         >
                             <ul>
                                 <li>Made and Shipped from the Philippines</li>
-                                <li>Orders are processed in about 2-3 days</li>
+                                <li>Orders are processed in about 1 to 2 days</li>
                                 <li>Pay by bank transfer, cash on delivery, PayPal or Gcash</li>
                             </ul>
                         </ProductDropdown>
@@ -319,6 +320,7 @@ export default function LuxPlantMiniPage() {
                     </div>
                 </div>
             </main>
+            <FaqSection />
             <Footer />
         </div>
     );

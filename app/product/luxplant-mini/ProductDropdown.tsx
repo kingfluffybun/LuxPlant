@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ChevronUp } from "lucide-react";
+import "../../../public/css/product-dropdown.css";
 
 type ProductDropdownProps = {
     children: ReactNode;
