@@ -421,6 +421,7 @@ export default function App() {
     const [recent, setRecent] = useState<string[]>(quickColors);
 
     const [tab, setTab] = useState<Tab>("color");
+    const [moreSection, setMoreSection] = useState<string | null>(null);
     const [search, setSearch] = useState("");
     const [dialog, setDialog] = useState<DialogState>({ kind: "none" });
     const [nameDraft, setNameDraft] = useState("");
@@ -828,108 +829,144 @@ export default function App() {
         </>
     );
 
-    const renderMoreTab = () => (
-        <>
-            <div className="card">
-                <div className="card-header">
-                    <h2>Segments</h2>
-                    <small>{segments.length} leaves · {info.leds} LEDs</small>
-                </div>
-                <div className="list">
-                    {segments.map((segment) => (
-                        <div key={segment.id} className={cx("segment-row", selection.includes(segment.id) && "active")}>
-                            <button className="segment-main" onClick={() => setSelection([segment.id])}>
-                                <span className="segment-dot" style={{ background: segment.colors[0] }} />
-                                <span>
-                                    <strong>{segment.name}</strong>
-                                    <small>{`LED ${segment.start}–${segment.stop - 1}`}</small>
-                                </span>
-                            </button>
-                            <Switch on={segment.on} label={`${segment.name} on`} onClick={() => toggleSegment(segment.id)} />
+    const renderMoreTab = () => {
+        const sections = [
+            {
+                id: "segments",
+                label: "Segments",
+                summary: `${segments.length} leaves · ${info.leds} LEDs`,
+                content: (
+                    <div className="list">
+                        {segments.map((segment) => (
+                            <div key={segment.id} className={cx("segment-row", selection.includes(segment.id) && "active")}>
+                                <button className="segment-main" onClick={() => setSelection([segment.id])}>
+                                    <span className="segment-dot" style={{ background: segment.colors[0] }} />
+                                    <span>
+                                        <strong>{segment.name}</strong>
+                                        <small>{`LED ${segment.start}–${segment.stop - 1}`}</small>
+                                    </span>
+                                </button>
+                                <Switch on={segment.on} label={`${segment.name} on`} onClick={() => toggleSegment(segment.id)} />
+                            </div>
+                        ))}
+                    </div>
+                )
+            },
+            {
+                id: "nightlight",
+                label: "Nightlight",
+                content: (
+                    <>
+                        <Slider id="nl-dur" label="Duration" value={nightlightMinutes} min={1} max={120} display={`${nightlightMinutes} min`} onChange={setNightlightMinutes} />
+                        <Slider id="nl-bri" label="Target brightness" value={nightlightBrightness} onChange={setNightlightBrightness} />
+                        <div className="chips">
+                            {nightlightModes.map((mode) => (
+                                <button key={mode} className={cx("chip", nightlightMode === mode && "active")} onClick={() => setNightlightMode(mode)}>
+                                    {mode}
+                                </button>
+                            ))}
                         </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className="card">
-                <div className="card-header">
-                    <h2>Nightlight</h2>
-                    <Switch on={nightlightOn} label="Nightlight" onClick={() => setNightlightOn(!nightlightOn)} />
-                </div>
-                <Slider id="nl-dur" label="Duration" value={nightlightMinutes} min={1} max={120} display={`${nightlightMinutes} min`} onChange={setNightlightMinutes} />
-                <Slider id="nl-bri" label="Target brightness" value={nightlightBrightness} onChange={setNightlightBrightness} />
-                <div className="chips">
-                    {nightlightModes.map((mode) => (
-                        <button key={mode} className={cx("chip", nightlightMode === mode && "active")} onClick={() => setNightlightMode(mode)}>
-                            {mode}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div className="card">
-                <div className="card-header">
-                    <h2>Timers</h2>
-                    <button className="button small" onClick={() => openTimerDialog()}>Add timer</button>
-                </div>
-                <small>{timers.filter((timer) => timer.enabled).length} enabled</small>
-                <div className="list">
-                    {timers.map((timer) => (
-                        <div key={timer.id} className="timer">
-                            <div className="timer-top">
-                                <div className="timer-label">
-                                    <strong>{timer.label}</strong>
+                    </>
+                )
+            },
+            {
+                id: "timers",
+                label: "Timers",
+                summary: `${timers.filter((timer) => timer.enabled).length} enabled`,
+                content: (
+                    <>
+                        <div className="section-actions">
+                            <button className="button small" onClick={() => openTimerDialog()}>Add timer</button>
+                        </div>
+                        <div className="list">
+                            {timers.map((timer) => (
+                                <div key={timer.id} className="timer">
+                                    <div className="timer-top">
+                                        <div className="timer-label">
+                                            <strong>{timer.label}</strong>
+                                        </div>
+                                        <Switch on={timer.enabled} label={`${timer.label} enabled`} onClick={() => updateTimer(timer.id, { enabled: !timer.enabled })} />
+                                    </div>
+                                    <div className="timer-times">
+                                        <label className="timer-time-field">
+                                            <span>Turn on</span>
+                                            <input type="time" className="timer-time" value={timer.onTime} onChange={(event) => updateTimer(timer.id, { onTime: event.target.value })} />
+                                        </label>
+                                        <label className="timer-time-field">
+                                            <span>Turn off</span>
+                                            <input type="time" className="timer-time" value={timer.offTime} onChange={(event) => updateTimer(timer.id, { offTime: event.target.value })} />
+                                        </label>
+                                    </div>
+                                    <div className="days">
+                                        {dayLabels.map((label, index) => (
+                                            <button key={index} className={cx("day", timer.days[index] && "active")} onClick={() => toggleTimerDay(timer, index)} aria-label={`Day ${index + 1}`}>
+                                                {label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="timer-actions">
+                                        <button className="timer-action" onClick={() => openTimerDialog(timer)}>Edit</button>
+                                        <button className="timer-action danger" onClick={() => removeTimer(timer.id)}>Delete</button>
+                                    </div>
                                 </div>
-                                <Switch on={timer.enabled} label={`${timer.label} enabled`} onClick={() => updateTimer(timer.id, { enabled: !timer.enabled })} />
-                            </div>
-                            <div className="timer-times">
-                                <label className="timer-time-field">
-                                    <span>Turn on</span>
-                                    <input type="time" className="timer-time" value={timer.onTime} onChange={(event) => updateTimer(timer.id, { onTime: event.target.value })} />
-                                </label>
-                                <label className="timer-time-field">
-                                    <span>Turn off</span>
-                                    <input type="time" className="timer-time" value={timer.offTime} onChange={(event) => updateTimer(timer.id, { offTime: event.target.value })} />
-                                </label>
-                            </div>
-                            <div className="days">
-                                {dayLabels.map((label, index) => (
-                                    <button key={index} className={cx("day", timer.days[index] && "active")} onClick={() => toggleTimerDay(timer, index)} aria-label={`Day ${index + 1}`}>
-                                        {label}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className="timer-actions">
-                                <button className="timer-action" onClick={() => openTimerDialog(timer)}>Edit</button>
-                                <button className="timer-action danger" onClick={() => removeTimer(timer.id)}>Delete</button>
-                            </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
-            </div>
+                    </>
+                )
+            },
+            {
+                id: "device",
+                label: "Sync & device",
+                content: (
+                    <>
+                        <div className="setting-row">
+                            <span>Send to other WLED devices</span>
+                            <Switch on={syncSend} label="Sync send" onClick={() => setSyncSend(!syncSend)} />
+                        </div>
+                        <div className="setting-row">
+                            <span>Receive from other devices</span>
+                            <Switch on={syncReceive} label="Sync receive" onClick={() => setSyncReceive(!syncReceive)} />
+                        </div>
+                        <div className="info-grid">
+                            <div><small>IP</small><strong>{ip}</strong></div>
+                            <div><small>Firmware</small><strong>{info.ver}</strong></div>
+                            <div><small>Signal</small><strong>{info.rssi === null ? "—" : `${info.rssi}%`}</strong></div>
+                            <div><small>Uptime</small><strong>{info.uptime}</strong></div>
+                        </div>
+                        <div className="section-actions">
+                            <button className="button small secondary" onClick={openConnectDialog}>Connect</button>
+                        </div>
+                    </>
+                )
+            }
+        ];
 
-            <div className="card">
-                <div className="card-header">
-                    <h2>Sync &amp; device</h2>
-                    <button className="button small secondary" onClick={openConnectDialog}>Connect</button>
-                </div>
-                <div className="setting-row">
-                    <span>Send to other WLED devices</span>
-                    <Switch on={syncSend} label="Sync send" onClick={() => setSyncSend(!syncSend)} />
-                </div>
-                <div className="setting-row">
-                    <span>Receive from other devices</span>
-                    <Switch on={syncReceive} label="Sync receive" onClick={() => setSyncReceive(!syncReceive)} />
-                </div>
-                <div className="info-grid">
-                    <div><small>IP</small><strong>{ip}</strong></div>
-                    <div><small>Firmware</small><strong>{info.ver}</strong></div>
-                    <div><small>Signal</small><strong>{info.rssi === null ? "—" : `${info.rssi}%`}</strong></div>
-                    <div><small>Uptime</small><strong>{info.uptime}</strong></div>
+        return (
+            <div className="card accordion-card">
+                <div className="accordion-list">
+                    {sections.map((section) => {
+                        const open = moreSection === section.id;
+
+                        return (
+                            <div key={section.id} className={cx("accordion-item", open && "open")}>
+                                <button
+                                    type="button"
+                                    className="accordion-trigger"
+                                    aria-expanded={open}
+                                    onClick={() => setMoreSection(open ? null : section.id)}
+                                >
+                                    <span>{section.label}</span>
+                                    {open && section.summary && <small>{section.summary}</small>}
+                                    <span className="accordion-chevron">{open ? "−" : "+"}</span>
+                                </button>
+                                {open && <div className="accordion-content">{section.content}</div>}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
-        </>
-    );
+        );
+    };
 
     const renderTabContent = () => {
         switch (tab) {
