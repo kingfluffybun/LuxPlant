@@ -1,0 +1,99 @@
+.policy-page-layout {
+    display: grid;
+    grid-template-areas:
+        "nav"
+        "main"
+        "footer";
+    grid-template-rows: 80px minmax(0, 1fr) auto;
+    min-height: 100vh;
+}
+
+.policy-page-layout > .site-nav {
+    position: relative;
+    grid-area: nav;
+}
+
+.policy-page-main {
+    grid-area: main;
+    width: min(100%, 960px);
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+}
+
+.policy-document {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.policy-document .policy-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+}
+
+.policy-document h1 {
+    margin: 0;
+    font-size: 3rem;
+}
+
+.policy-document .policy-dates {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.policy-document section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.policy-document h2 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.policy-document h3 {
+    margin: 8px 0 0;
+    font-size: 1.25rem;
+}
+
+.policy-document p,
+.policy-document li {
+    max-width: 72ch;
+    color: var(--text-body);
+    font-size: 1.125rem;
+    line-height: 1.75;
+}
+
+.policy-document ul,
+.policy-document ol {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 28px;
+}
+
+.policy-document strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.policy-document a {
+    color: var(--primary);
+    font-size: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.policy-document ul {
+    list-style-type: disc;
+}
+
+.policy-document ol {
+    list-style-type: decimal;
+}

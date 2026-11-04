@@ -56,8 +56,8 @@ export default function Footer() {
                 <div className="site-footer-links">
                     <b>Policies</b>
                     <ul>
-                        <li><Link href="/">Privacy Policy</Link></li>
-                        <li><Link href="/">Terms of Service</Link></li>
+                        <li><Link href="/privacy">Privacy Policy</Link></li>
+                        <li><Link href="/terms">Terms and Conditions</Link></li>
                     </ul>
                 </div>
             </div>
