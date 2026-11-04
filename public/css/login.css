@@ -176,7 +176,7 @@
     cursor: pointer;
 }
 
-/* Password Strength Meter Styles */
+/* Password Strength Meter Styles - Progressive Fill */
 .password-strength-container {
     display: flex;
     align-items: center;
@@ -186,7 +186,7 @@
 
 .password-strength-meter {
     flex: 1;
-    height: 8px;
+    height: 12px;
     background-color: var(--border);
     border-radius: 4px;
     overflow: hidden;
@@ -200,8 +200,18 @@
     transition: all 300ms ease;
 }
 
-.password-strength-bar-empty {
-    background-color: var(--border);
+.password-strength-meter[data-level="1"] .password-strength-bar,
+.password-strength-meter[data-level="2"] .password-strength-bar {
+    background-color: #ef4444;
+}
+
+.password-strength-meter[data-level="3"] .password-strength-bar,
+.password-strength-meter[data-level="4"] .password-strength-bar {
+    background-color: #f59e0b;
+}
+
+.password-strength-meter[data-level="5"] .password-strength-bar {
+    background-color: var(--primary);
 }
 
 .strength-text {

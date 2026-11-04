@@ -44,6 +44,7 @@ export default function ResetPasswordPage() {
         setError("");
         setSuccess("");
 
+        // Basic validation
         if (!newPassword || !confirmPassword) {
             setError("Please enter both passwords.");
             return;
@@ -56,6 +57,30 @@ export default function ResetPasswordPage() {
 
         if (newPassword !== confirmPassword) {
             setError("Passwords do not match.");
+            return;
+        }
+
+        // Check password strength requirements
+        const conditions = getStrengthConditions();
+        
+        const missingRequirements: string[] = [];
+        
+        if (!/[a-z]/.test(newPassword)) {
+            missingRequirements.push("Add a lowercase letter");
+        }
+        if (!/[A-Z]/.test(newPassword)) {
+            missingRequirements.push("Add an uppercase letter");
+        }
+        if (!/[\d]/.test(newPassword)) {
+            missingRequirements.push("Add a number");
+        }
+        if (!/[^a-zA-Z0-9]/.test(newPassword)) {
+            missingRequirements.push("Add a special character (!@#$)");
+        }
+
+        // Show strength requirement errors after submission attempt
+        if (missingRequirements.length > 0) {
+            setError(`Password must meet these requirements:\n${missingRequirements.join("\n")}`);
             return;
         }
 
@@ -84,19 +109,26 @@ export default function ResetPasswordPage() {
         }
     };
 
-    // password strength
-    const getStrength = () => {
-        let score = 0;
-        const pwd = newPassword;
-        if (pwd.length >= 8) score += 1;
-        if (pwd.length >= 12) score += 1;
-        if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) score += 1;
-        if (/[\d]/.test(pwd)) score += 1;
-        if (/[^a-zA-Z\d]/.test(pwd)) score += 1;
-        return Math.min(score, 4);
+    // Password strength indicator
+    const getStrengthConditions = () => {
+        const conditions: Record<string, boolean> = {
+            minLength: newPassword.length >= 8,
+            hasUppercase: /[A-Z]/.test(newPassword),
+            hasLowercase: /[a-z]/.test(newPassword),  
+            hasNumber: /[\d]/.test(newPassword),
+            hasSpecial: /[^a-zA-Z0-9]/.test(newPassword),
+        };
+        return conditions;
     };
 
-    const strength = getStrength();
+    const conditions = getStrengthConditions();
+    const totalActiveBars = Object.values(conditions).filter(Boolean).length as number;
+    const missingRequirements = [
+        !conditions.hasLowercase && "Add a lowercase letter",
+        !conditions.hasUppercase && "Add an uppercase letter",
+        !conditions.hasNumber && "Add a number",
+        !conditions.hasSpecial && "Add a special character (!@#$)",
+    ].filter((requirement): requirement is string => Boolean(requirement));
 
     return (
         <div className="auth-page-layout">
@@ -164,39 +196,27 @@ export default function ResetPasswordPage() {
                                     />
                                 </div>
 
-                                {/* Password Strength Meter - Gradient Bar */}
+                                {/* Password Strength */}
                                 <div className="password-strength-container">
                                     <label>Password strength:</label>
-                                    <div className="password-strength-meter">
-                                        {strength > 0 ? (
-                                            <div 
-                                                className="password-strength-bar"
-                                                style={{
-                                                    width: `${(strength / 4) * 100}%`,
-                                                    background: `linear-gradient(to right, #ef4444 0%, ${
-                                                        strength === 4 ? '#10b981' : strength === 3 ? '#eab308' : '#f59e0b'
-                                                    } 100%)`
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="password-strength-bar-empty" />
-                                        )}
+                                    <div className="password-strength-meter" data-level={totalActiveBars}>
+                                        <div 
+                                            className="password-strength-bar"
+                                            style={{
+                                                width: `${(totalActiveBars / 5) * 100}%`
+                                            }}
+                                        />
                                     </div>
-                                    {strength > 0 && (
-                                        <span className="strength-text">
-                                            {strength === 4 ? "Strong" : strength === 3 ? "Good" : strength === 2 ? "Fair" : "Weak"}
-                                        </span>
-                                    )}
                                 </div>
 
                                 {/* Strength Recommendations */}
-                                <ul className="strength-hints">
-                                    {!/[a-z]/.test(newPassword) && <li>Add lowercase letter</li>}
-                                    {!/[A-Z]/.test(newPassword) && <li>Add uppercase letter</li>}
-                                    {!/[\d]/.test(newPassword) && <li>Add number</li>}
-                                    {!/[^a-zA-Z\d]/.test(newPassword) && <li>Add special character (!@#$)</li>}
-                                    {newPassword.length < 12 && newPassword.length < 8 && <li>Make it longer (8+ chars recommended)</li>}
-                                </ul>
+                                {!success && error && missingRequirements.length > 0 ? (
+                                    <ul className="strength-hints">
+                                        {missingRequirements.map((req, index) => (
+                                            <li key={index} style={{ color: '#ef4444' }}>{req}</li>
+                                        ))}
+                                    </ul>
+                                ) : null}
 
                                 <button
                                     type="submit"
