@@ -107,10 +107,10 @@ export default function LoginPage() {
                                 </button>
                             </div>
                             <div className="login-remember-forgot">
-                                <div className="login-remember-me">
+                                {/* <div className="login-remember-me">
                                     <input type="checkbox" id="remember-me" name="remember-me" />
                                     <label htmlFor="remember-me">Remember me</label>
-                                </div>
+                                </div> */}
                                 <Link href="/forgot-password" className="forgot-password-link">Forgot password?</Link>
                             </div>
                             <button type="submit" disabled={loading} className="link-button-primary" >
