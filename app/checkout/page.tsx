@@ -5,7 +5,7 @@ import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
-import { Landmark, HandCoins, Minus, Plus, Tag } from "lucide-react";
+import { Landmark, HandCoins, Minus, Plus, Tag, BadgePercent } from "lucide-react";
 import Image from "next/image";
 import CheckoutRegionSelect from "../components/CheckoutRegionSelect";
 import { useState } from "react";
@@ -175,7 +175,10 @@ export default function CheckoutPage() {
                                         </button>
                                     </div>
                                 </div>
-                                <p id="discount-note">Get 10% off and free shipping when you order 2 or more plants. Add one more plant to your cart to qualify.</p>
+                                <div className="checkout-discount-note">
+                                    <BadgePercent size={24}/>
+                                    <p id="discount-note">Get 10% off and free shipping when you order 2 or more plants.</p>
+                                </div>
                             </div>
                         </div>
                         <div className="order-item-prices">

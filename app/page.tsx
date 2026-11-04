@@ -13,10 +13,8 @@ import FaqSection from "./components/FaqSection";
 
 export default function Home() {
     const [isHeroTextVisible, setIsHeroTextVisible] = useState(true);
-    const [hasToggledHeroText, setHasToggledHeroText] = useState(false);
 
     function toggleHeroText() {
-        setHasToggledHeroText(true);
         setIsHeroTextVisible((visible) => !visible);
     }
 
@@ -24,14 +22,16 @@ export default function Home() {
         <div className="landing-page">
             <main className="landing-page-main">
                 <Navigation transparentAtTop />
-                <div className={`hero${hasToggledHeroText ? " hero-text-toggle-active" : ""}${!isHeroTextVisible ? " hero-text-hidden" : ""}`}>
+                <div className={`hero${!isHeroTextVisible ? " hero-text-hidden" : ""}`}>
                     <video src="/assets/landing-page.mp4" autoPlay loop muted playsInline />
                     <div className="hero-text">
-                        <h1>A plant that grows in color, powered by light</h1>
-                        <p>LuxPlant is a fully 3D-printed LED plant — modular stems, diffused glowing leaves, and full control over every color and animation.</p>
-                        <div>
-                            <Link href={"/"} className="link-button-primary">Get Started</Link>
-                            <Link href={"/"} className="link-button-secondary">Learn More</Link>
+                        <div className="hero-text-entrance">
+                            <h1>A plant that grows in color, powered by light</h1>
+                            <p>LuxPlant is a fully 3D-printed LED plant — modular stems, diffused glowing leaves, and full control over every color and animation.</p>
+                            <div>
+                                <Link href={"/"} className="link-button-primary">Get Started</Link>
+                                <Link href={"/"} className="link-button-secondary">Learn More</Link>
+                            </div>
                         </div>
                     </div>
                     <button

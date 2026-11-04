@@ -21,15 +21,20 @@
 }
 
 .hero-text {
+    opacity: 1;
+    transition: opacity 400ms ease;
+    max-width: 1200px;
+    z-index: 1;
+}
+
+.hero-text-entrance {
     opacity: 0;
     animation: hero-text-fade-in 1800ms ease 1600ms forwards;
-    max-width: 1200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 24px;
-    z-index: 1;
     h1 {max-width: 1024px;}
     p {color: var(--text-main); font-size: 2rem;}
     div {
@@ -44,13 +49,7 @@
     }
 }
 
-.hero.hero-text-toggle-active .hero-text {
-    animation: none;
-    opacity: 1;
-    transition: opacity 400ms ease;
-}
-
-.hero.hero-text-toggle-active.hero-text-hidden .hero-text {
+.hero.hero-text-hidden .hero-text {
     opacity: 0;
     pointer-events: none;
 }

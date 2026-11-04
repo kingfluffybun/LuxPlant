@@ -16,7 +16,7 @@
 .checkout-page-main {
     grid-area: main;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.25fr 1fr;
     padding: 80px max(24px, calc((100% - 1200px) / 2));
     gap: 48px;
     min-height: 100vh;
@@ -168,14 +168,20 @@
 .order-summary {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    > b {
+        color: var(--text-main);
+        font-family: var(--font-montserrat);
+        font-size: 1.5rem;
+        line-height: 1.25;
+    }
     hr {border: 1px solid var(--border);}
 }
 
 .order-summary-breakdown {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .order-summary-row,
@@ -192,7 +198,7 @@
 
 .order-summary-row {
     color: var(--text-body);
-    font-size: 1rem;
+    font-size: 1.125rem;
     > span:last-child {
         color: var(--text-main);
     }
@@ -201,7 +207,7 @@
 .order-summary-item .order-item-original-price,
 .order-summary-shipping .order-item-original-price {
     color: var(--text-muted);
-    font-size: 0.875rem;
+    font-size: 1rem;
     text-decoration: line-through;
 }
 
@@ -213,10 +219,10 @@
 }
 
 .order-summary-total {
-    padding-top: 12px;
+    padding-top: 16px;
     border-top: 1px solid var(--border);
     color: var(--text-main);
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     .order-summary-total-label {
         display: flex;
@@ -227,7 +233,7 @@
 }
 
 .order-summary-total-amount {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
 }
 
 .order-summary-savings {
@@ -238,7 +244,7 @@
     border-radius: 6px;
     background-color: color-mix(in srgb, var(--primary) 18%, var(--secondary-background));
     color: var(--primary);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
 }
@@ -246,17 +252,18 @@
 .order-summary-item {
     display: flex;
     justify-content: space-between;
-    gap: 16px;
+    gap: 24px;
     p {color: var(--text-main); font-size: 1rem;}
-    #discount {display: flex; align-items: center; gap: 4px; color: var(--primary); font-size: 0.75rem; font-weight: 600;}
+    #product-name {font-size: 1.25rem; font-weight: 600;}
+    #discount {display: flex; align-items: center; gap: 4px; color: var(--primary); font-size: 0.875rem; font-weight: 600;}
     /* #product-name {margin-bottom: 8px;} */
-    #discount-note {color: var(--text-body); font-size: 0.75rem;}
+    #discount-note {color: var(--text-body); font-size: 1rem;}
 }
 
 .order-item-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
 .checkout-quantity-input {
@@ -271,7 +278,7 @@
         color: var(--text-body);
         border: 1px var(--border) solid;
         border-radius: 8px;
-        font-size: 0.75rem;
+        font-size: 1rem;
     }
     input::-webkit-inner-spin-button,
     input::-webkit-outer-spin-button {
@@ -299,13 +306,19 @@
         pointer-events: auto;
     }
 }
+.checkout-discount-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    svg {min-width: 32px; min-height: 32px; color: var(--primary);}
+}
 
 .order-item-prices {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-    padding-left: 48px;
+    .order-item-price {font-size: 1.25rem; font-weight: 600;}
 }
 
 .order-item-details {
@@ -313,13 +326,14 @@
     gap: 16px;
     .order-item {
         position: relative;
-        min-height: 100px; min-width: 100px;
+        aspect-ratio: 1/1;
+        width: 100px; height: 140px;
         border: 1px solid var(--border);
         img {
             width: 100%; height: 100%;
             position: absolute;
             object-fit: cover;
-            object-position: center -24px;
+            object-position: center;
         }
         span {
             position: absolute;
@@ -330,7 +344,7 @@
             top: -10px; right: -10px;
             z-index: 2;
             background-color: var(--primary);
-            font-size: 0.75rem; font-weight: 600;
+            font-size: 0.875rem; font-weight: 600;
         }
     }
 }
