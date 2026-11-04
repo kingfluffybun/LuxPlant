@@ -146,6 +146,7 @@
     border-radius: 8px;
     border: solid 1px var(--border);
     p {color: var(--text-main); font-size: 1rem;}
+    cursor: pointer;
 }
 
 .register-header {

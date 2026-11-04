@@ -99,11 +99,8 @@ export default function CheckoutPage() {
                                 <input type="radio" name="paymentMethod" value="bank-transfer" required />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <div>
-                                            <Landmark size={32}/>
-                                            <span>Bank transfer</span>
-                                        </div>
-                                        <p>Pay via MariBank after placing your order</p>
+                                        <span>Bank transfer</span>
+                                        <Landmark size={32} color="#fff"/>
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
@@ -112,11 +109,8 @@ export default function CheckoutPage() {
                                 <input type="radio" name="paymentMethod" value="cash-on-delivery" />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <div>
-                                            <HandCoins size={32}/>
-                                            <span>Cash on delivery</span>
-                                        </div>
-                                        <p>Pay the courier when it arrives</p>
+                                        <span>Cash on delivery</span>
+                                        <HandCoins size={32} color="#fff"/>
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
@@ -125,11 +119,8 @@ export default function CheckoutPage() {
                                 <input type="radio" name="paymentMethod" value="paypal" />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <div>
-                                            <Image src="/assets/paypal.svg" alt="PayPal" width={32} height={32} />
-                                            <span>PayPal</span>
-                                        </div>
-                                        <p>Send payment after placing your order</p>
+                                        <span>Pay with PayPal</span>
+                                        <Image src="/assets/paypal.svg" alt="PayPal" width={32} height={32} />
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
@@ -138,11 +129,8 @@ export default function CheckoutPage() {
                                 <input type="radio" name="paymentMethod" value="gcash" />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <div>
-                                            <Image src="/assets/gcash.svg" alt="PayPal" width={32} height={32} />
-                                            <span>GCash</span>
-                                        </div>
-                                        <p>Scan a QR after placing your order</p>
+                                        <span>Pay with GCash</span>
+                                        <Image src="/assets/gcash.svg" alt="PayPal" width={32} height={32} />
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
