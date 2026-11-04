@@ -99,8 +99,8 @@ export default function CheckoutPage() {
                                 <input type="radio" name="paymentMethod" value="bank-transfer" required />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <span>Bank transfer</span>
-                                        <Landmark size={32} color="#fff"/>
+                                        <span>Cash on delivery</span>
+                                        <HandCoins size={32} color="#fff"/>
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
@@ -109,8 +109,8 @@ export default function CheckoutPage() {
                                 <input type="radio" name="paymentMethod" value="cash-on-delivery" />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <span>Cash on delivery</span>
-                                        <HandCoins size={32} color="#fff"/>
+                                        <span>Pay with MariBank</span>
+                                        <Image src="/assets/maribank.svg" alt="MariBank" width={32} height={32} />
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
