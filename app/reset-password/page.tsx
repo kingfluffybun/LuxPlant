@@ -18,19 +18,19 @@ export default function ResetPasswordPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     // Check if user is logged in - redirect if they are
-    // useEffect(() => {
-    //     const checkAuth = async () => {
-    //         try {
-    //             const { data: { session } } = await supabase.auth.getSession();
-    //             if (session) {
-    //                 window.location.href = "/";
-    //             }
-    //         } catch (err) {
-    //             console.error("Auth check error:", err);
-    //         }
-    //     };
-    //     checkAuth();
-    // }, []);
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    window.location.href = "/";
+                }
+            } catch (err) {
+                console.error("Auth check error:", err);
+            }
+        };
+        checkAuth();
+    }, []);
 
     // password input
     useEffect(() => {
@@ -39,6 +39,7 @@ export default function ResetPasswordPage() {
             passwordInput.focus();
         }
     }, []);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -61,8 +62,6 @@ export default function ResetPasswordPage() {
         }
 
         // Check password strength requirements
-        const conditions = getStrengthConditions();
-        
         const missingRequirements: string[] = [];
         
         if (!/[a-z]/.test(newPassword)) {
@@ -78,7 +77,6 @@ export default function ResetPasswordPage() {
             missingRequirements.push("Add a special character (!@#$)");
         }
 
-        // Show strength requirement errors after submission attempt
         if (missingRequirements.length > 0) {
             setError(`Password must meet these requirements:\n${missingRequirements.join("\n")}`);
             return;
