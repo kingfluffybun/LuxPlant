@@ -18,6 +18,14 @@ type Timer = { id: number; label: string; onTime: string; offTime: string; days:
 type DeviceInfo = { name: string; ver: string; leds: number; rssi: number | null; uptime: string };
 
 type DeviceSegmentState = {id?: number;start?: number;stop?: number;on?: boolean;col?: number[][];pal?: number;fx?: number;sx?: number;ix?: number;};
+type DeviceState = {
+    on?: boolean; bri?: number; transition?: number; ps?: number; pl?: number;
+    nl?: { on?: boolean; dur?: number; mode?: number; tbri?: number };
+    udpn?: { send?: boolean; recv?: boolean };
+    seg?: DeviceSegmentState[];
+};
+type DevicePreset = { n?: string; playlist?: unknown; seg?: DeviceSegmentState[] };
+type PalStops = Record<string, number[][]>;
 
 type DialogState =
     | { kind: "none" }
@@ -26,6 +34,13 @@ type DialogState =
     | { kind: "rename"; id: string }
     | { kind: "delete"; id: string }
     | { kind: "timer"; timer: Timer | null };
+
+const LEAVES = 9;
+const LEAF_LEN = 14;
+const TOTAL_LEDS = LEAVES * LEAF_LEN; // 126
+const FIRST_FREE_SLOT = 32;
+const MAX_SLOT = 250;
+const HOST_KEY = "luxplant-host";
 
 const tabs: [Tab, string][] = [
     ["color", "Colors"],
@@ -159,46 +174,160 @@ function percent(value: number, max = 255) {
     return Math.round((value / max) * 100);
 }
 
-function normalizeLiveEffects(source?: Record<string, unknown>) {
-    return Object.entries(source ?? {}).map(([id, value]) => ({
-        id: Number(id),
-        name: String(value ?? id),
-        tag: "Live",
-    }));
+/* ---------- WLED helpers ---------- */
+
+const clean = (name: string) => name.replace(/^\*\s*/, ""); // WLED marks special palettes with "* "
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// /json/eff and /json/pal return a list of names, the position in the list is the id.
+function normalizeLiveEffects(source?: unknown): Effect[] {
+    const seen = new Set<string>();
+    return Object.entries((source ?? {}) as Record<string, unknown>)
+        .map(([id, value]) => ({ id: Number(id), name: String(value ?? id), tag: "Live" }))
+        .filter((effect) => effect.name && effect.name !== "RSVD" && effect.name !== "-")
+        .filter((effect) => (seen.has(effect.name.toLowerCase()) ? false : (seen.add(effect.name.toLowerCase()), true)))
+        .sort((a, b) => (a.id === 0 ? -1 : b.id === 0 ? 1 : a.name.localeCompare(b.name)));
 }
 
-function normalizeLivePalettes(source?: Record<string, unknown>) {
-    return Object.entries(source ?? {}).map(([id, value]) => ({
-        id: Number(id),
-        name: String(value ?? id),
-        gradient: "linear-gradient(90deg, #ff5d8f, #7cc8ff, #5eead4)",
-    }));
+function normalizeLivePalettes(source?: unknown, stops: PalStops = {}): Palette[] {
+    const seen = new Set<string>();
+    return Object.entries((source ?? {}) as Record<string, unknown>)
+        .map(([id, value]) => ({
+            id: Number(id),
+            name: clean(String(value ?? id)),
+            gradient: gradientFrom(stops[id]) ?? "linear-gradient(90deg, #ff5d8f, #7cc8ff, #5eead4)",
+        }))
+        .filter((palette) => palette.name && palette.name !== "RSVD" && palette.name !== "-")
+        .filter((palette) => (seen.has(palette.name.toLowerCase()) ? false : (seen.add(palette.name.toLowerCase()), true)));
 }
 
-function mapLiveSegment(segment: DeviceSegmentState, index: number): Segment {
-    const colors = Array.isArray(segment.col) && segment.col[0] ? segment.col[0] : [0, 0, 0];
+// The plant's real palette colours: the same data WLED's own page uses to draw its palette bars.
+async function loadPalx(host: string): Promise<PalStops> {
+    const all: PalStops = {};
+
+    try {
+        let max = 0;
+        for (let page = 0; page <= max && page < 40; page++) {
+            const data = await request(host, `/json/palx?page=${page}`);
+            max = data.m ?? 0;
+            Object.assign(all, data.p);
+        }
+    } catch {}
+
+    return all;
+}
+
+function stopList(stops?: unknown[]): number[][] {
+    return ((stops ?? []).filter((entry) => Array.isArray(entry) && entry.length >= 4) as number[][]);
+}
+
+function gradientFrom(stops?: unknown[]) {
+    const list = stopList(stops);
+    if (list.length < 2) return undefined;
+    return `linear-gradient(90deg, ${list.map((s) => `rgb(${s[1]},${s[2]},${s[3]}) ${Math.round((s[0] / 255) * 100)}%`).join(", ")})`;
+}
+
+function sampleStops(list: number[][], u: number): [number, number, number] {
+    const pos = Math.min(1, Math.max(0, u)) * 255;
+
+    for (let i = 1; i < list.length; i++) {
+        if (pos <= list[i][0]) {
+            const a = list[i - 1];
+            const b = list[i];
+            const f = (pos - a[0]) / Math.max(1, b[0] - a[0]);
+            return [a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f];
+        }
+    }
+
+    const last = list[list.length - 1];
+    return [last[1], last[2], last[3]];
+}
+
+// First clearly visible colour of a palette (some start with black).
+function firstLit(list: number[][]) {
+    return list.find((s) => s[1] + s[2] + s[3] > 60) ?? list[0];
+}
+
+function fromDeviceSegment(segment: DeviceSegmentState, index: number): Segment {
     const id = Number(segment.id ?? index);
+    const start = Number(segment.start ?? index * LEAF_LEN);
+    const colors = [0, 1, 2].map((slot) => {
+        const c = segment.col?.[slot];
+        return c ? rgbToHex(c[0] ?? 0, c[1] ?? 0, c[2] ?? 0) : "#000000";
+    }) as Slot;
 
     return {
         id,
         name: `Leaf ${id + 1}`,
-        start: Number(segment.start ?? index * 14),
-        stop: Number(segment.stop ?? Number(segment.start ?? index * 14) + 14),
+        start,
+        stop: Number(segment.stop ?? start + LEAF_LEN),
         on: segment.on ?? true,
-        colors: [rgbToHex(colors[0] ?? 0, colors[1] ?? 0, colors[2] ?? 0), rgbToHex(colors[0] ?? 0, colors[1] ?? 0, colors[2] ?? 0), "#000000"],
-        effect: Number(segment.fx ?? 79),
+        colors,
+        effect: Number(segment.fx ?? 0),
         palette: Number(segment.pal ?? 0),
         speed: Number(segment.sx ?? 128),
         intensity: Number(segment.ix ?? 128),
     };
 }
 
-async function request(host: string, path: string, body?: object) {
-    const init = body && { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
-    const response = await fetch(`http://${host}${path}`, init);
+/**
+ * The screen always shows nine leaves. Most presets give the plant ONE segment instead,
+ * so that single segment is shown as nine identical leaves. The first change you make then
+ * recreates the nine real leaf segments on the plant (see commitSegments).
+ */
+function mapDeviceSegments(raw: DeviceSegmentState[]): { list: Segment[]; leaves: boolean } {
+    const active = raw.map((segment, index) => ({ segment, index })).filter(({ segment }) => (segment.stop ?? 1) > (segment.start ?? 0));
+    const isLeaves =
+        active.length === LEAVES &&
+        active.every(({ segment }, i) => (segment.id ?? i) === i && segment.start === i * LEAF_LEN && segment.stop === (i + 1) * LEAF_LEN);
 
-    if (!response.ok) throw new Error(String(response.status));
-    return response.json();
+    if (isLeaves) return { list: active.map(({ segment, index }) => fromDeviceSegment(segment, index)), leaves: true };
+
+    if (active.length === 1 && active[0].segment.start === 0 && (active[0].segment.stop ?? 0) >= TOTAL_LEDS) {
+        const base = fromDeviceSegment(active[0].segment, 0);
+        return {
+            list: Array.from({ length: LEAVES }, (_, i) => ({
+                ...base,
+                id: i,
+                name: `Leaf ${i + 1}`,
+                start: i * LEAF_LEN,
+                stop: (i + 1) * LEAF_LEN,
+                colors: [...base.colors] as Slot,
+            })),
+            leaves: false,
+        };
+    }
+
+    return { list: active.map(({ segment, index }) => fromDeviceSegment(segment, index)), leaves: true };
+}
+
+// What to send for the fields that changed.
+function toDevice(changes: Partial<Segment>) {
+    return {
+        ...(changes.on !== undefined && { on: changes.on }),
+        ...(changes.colors && { col: changes.colors.map(hexToRgb) }),
+        ...(changes.effect !== undefined && { fx: changes.effect }),
+        ...(changes.palette !== undefined && { pal: changes.palette }),
+        ...(changes.speed !== undefined && { sx: changes.speed }),
+        ...(changes.intensity !== undefined && { ix: changes.intensity }),
+    };
+}
+
+async function request(host: string, path: string, body?: object) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    try {
+        const init = body
+            ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: controller.signal }
+            : { signal: controller.signal };
+        const response = await fetch(`http://${host}${path}`, init);
+
+        if (!response.ok) throw new Error(String(response.status));
+        return response.json();
+    } finally {
+        clearTimeout(timeout);
+    }
 }
 
 type SliderProps = {
@@ -405,18 +534,19 @@ function ColorPicker({ value, onChange, onCommit }: PickerProps) {
 
 export default function App() {
     const [connection, setConnection] = useState<Connection>("demo");
-    const [ip, setIp] = useState("192.168.50.42");
+    const [ip, setIp] = useState("luxplant.local");
     const [ipDraft, setIpDraft] = useState(ip);
     const [connecting, setConnecting] = useState(false);
     const [info, setInfo] = useState<DeviceInfo>({ name: "LuxPlant", ver: "0.14.x (demo)", leds: 72, rssi: null, uptime: "—" });
 
-    const [power, setPower] = useState(true);
-    const [brightness, setBrightness] = useState(200);
-    const [transition, setTransition] = useState(7);
+    const [power, setPowerState] = useState(true);
+    const [brightness, setBrightnessState] = useState(200);
+    const [transition, setTransitionState] = useState(7);
     const [segments, setSegments] = useState<Segment[]>(() => buildLeafSegments());
     const [selection, setSelection] = useState([0]);
     const [effectCatalog, setEffectCatalog] = useState<Effect[]>(effects);
     const [paletteCatalog, setPaletteCatalog] = useState<Palette[]>(palettes);
+    const [palStops, setPalStops] = useState<PalStops>({});
     const [slot, setSlot] = useState(0);
     const [recent, setRecent] = useState<string[]>(quickColors);
 
@@ -430,19 +560,39 @@ export default function App() {
 
     const [presets, setPresets] = useState(initialPresets);
     const [activePreset, setActivePreset] = useState<string | null>("p2");
-    const [playlistOn, setPlaylistOn] = useState(false);
+    const [playlistOn, setPlaylistOnState] = useState(false);
     const [playlistSeconds, setPlaylistSeconds] = useState(30);
     const [playlistRepeat, setPlaylistRepeat] = useState(true);
 
-    const [nightlightOn, setNightlightOn] = useState(false);
-    const [nightlightMinutes, setNightlightMinutes] = useState(30);
-    const [nightlightBrightness, setNightlightBrightness] = useState(0);
-    const [nightlightMode, setNightlightMode] = useState<NightlightMode>("fade");
+    const [nightlightOn, setNightlightOnState] = useState(false);
+    const [nightlightMinutes, setNightlightMinutesState] = useState(30);
+    const [nightlightBrightness, setNightlightBrightnessState] = useState(0);
+    const [nightlightMode, setNightlightModeState] = useState<NightlightMode>("fade");
     const [timers, setTimers] = useState(initialTimers);
-    const [syncSend, setSyncSend] = useState(false);
-    const [syncReceive, setSyncReceive] = useState(true);
+    const [syncSend, setSyncSendState] = useState(false);
+    const [syncReceive, setSyncReceiveState] = useState(true);
 
-    const firstPush = useRef(true);
+    // Connection plumbing. Refs hold the latest values so the WebSocket handlers never see stale state.
+    const wsRef = useRef<WebSocket | null>(null);
+    const connId = useRef(0);
+    const lastLocal = useRef(0);
+    const leavesOnDevice = useRef(false);
+    const playlistSince = useRef(0);
+    const throttle = useRef<Record<string, { t: number; timer?: ReturnType<typeof setTimeout>; body?: object }>>({});
+    const usedSlots = useRef<Set<number>>(new Set());
+    const segmentsRef = useRef(segments);
+    const presetsRef = useRef(presets);
+    const ipRef = useRef(ip);
+    const liveRef = useRef(false);
+    const catalogRef = useRef({ effects: effects as Effect[], palettes: palettes as Palette[], stops: {} as PalStops });
+    const nlRef = useRef({ on: false, dur: 30, tbri: 0, mode: "fade" as NightlightMode });
+
+    segmentsRef.current = segments;
+    presetsRef.current = presets;
+    ipRef.current = ip;
+    liveRef.current = connection === "live";
+    nlRef.current = { on: nightlightOn, dur: nightlightMinutes, tbri: nightlightBrightness, mode: nightlightMode };
+    catalogRef.current = { effects: effectCatalog, palettes: paletteCatalog, stops: palStops };
 
     const leaf = segments[Math.min(...selection)] ?? segments[0];
     const allSelected = selection.length === segments.length;
@@ -451,6 +601,21 @@ export default function App() {
     const filteredEffects = effectCatalog.filter((effect) => effect.name.toLowerCase().includes(search.trim().toLowerCase()));
 
     const selectionLabel = allSelected ? "All leaves" : selection.length === 1 ? leaf.name : `${selection.length} leaves`;
+
+    // While a palette drives a leaf, show the palette's colours on that leaf (the plain colour slots stay editable in the Colors tab).
+    const shownColors = (segment: Segment): [string, string] => {
+        const list = segment.palette ? stopList(palStops[String(segment.palette)]) : [];
+        if (list.length < 2) return [segment.colors[0], segment.colors[1]];
+
+        const lit = firstLit(list);
+        const u0 = lit[0] / 255;
+        const at = (u: number) => {
+            const [r, g, b] = sampleStops(list, u0 + (1 - u0) * u);
+            return rgbToHex(r, g, b);
+        };
+
+        return [at((segment.id + 0.2) / LEAVES), at((segment.id + 0.8) / LEAVES)];
+    };
 
     const status = {
         live: { label: "Connected", hint: ip },
@@ -465,27 +630,339 @@ export default function App() {
         return () => clearTimeout(timeout);
     }, [toast]);
 
+    // Reconnect to the plant you used last time.
     useEffect(() => {
-        if (connection !== "live") return;
+        const saved = localStorage.getItem(HOST_KEY);
+        if (saved) connect(saved);
 
-        if (firstPush.current) {
-            firstPush.current = false;
+        return () => {
+            connId.current++;
+            wsRef.current?.close();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    /* ---------- talking to the plant ---------- */
+
+    // Every control sends just the small JSON command for what you changed, and the plant answers with its real state.
+    async function push(body: object, slider = false) {
+        if (!liveRef.current) return;
+
+        lastLocal.current = slider ? Date.now() : 0; // after a tap, always accept the plant's answer
+        const socket = wsRef.current;
+
+        if (socket && socket.readyState === 1) {
+            socket.send(JSON.stringify(body));
             return;
         }
 
-        const timeout = setTimeout(() => {
-            request(ip, "/json/state", {
-                on: power,
-                bri: brightness,
-                transition,
-                nl: {
-                    on: nightlightOn,
-                    dur: nightlightMinutes,
-                    mode: nightlightModes.indexOf(nightlightMode),
-                    tbri: nightlightBrightness,
-                },
-                udpn: { send: syncSend, recv: syncReceive },
-                seg: segments.map((segment) => ({
+        try {
+            const state = await request(ipRef.current, "/json/state", { ...body, v: true });
+            if (state?.seg) applyDeviceState(state);
+        } catch {
+            setConnection("offline");
+            setToast("Lost connection to controller");
+        }
+    }
+
+    // Sliders and the colour wheel send at most about ten commands a second, and always the last value.
+    function pushThrottled(key: string, body: object) {
+        const entry = (throttle.current[key] ??= { t: 0 });
+        entry.body = body;
+        const wait = 90 - (Date.now() - entry.t);
+
+        if (wait <= 0) {
+            entry.t = Date.now();
+            push(body, true);
+        } else if (!entry.timer) {
+            entry.timer = setTimeout(() => {
+                entry.timer = undefined;
+                entry.t = Date.now();
+                push(entry.body as object, true);
+            }, wait);
+        }
+    }
+
+    // Shortly after a tap, ask the plant for its real state so the screen always matches it.
+    function resync(delay = 400) {
+        setTimeout(async () => {
+            if (!liveRef.current) return;
+
+            try {
+                const state = await request(ipRef.current, "/json/state");
+                if (state?.seg) applyDeviceState(state);
+            } catch {}
+        }, delay);
+    }
+
+    function applyDeviceState(state: DeviceState) {
+        setPowerState(!!state.on);
+        if (typeof state.bri === "number") setBrightnessState(Math.max(1, state.bri));
+        if (typeof state.transition === "number") setTransitionState(state.transition);
+
+        if (state.nl) {
+            setNightlightOnState(!!state.nl.on);
+            if (state.nl.dur) setNightlightMinutesState(state.nl.dur);
+            if (typeof state.nl.tbri === "number") setNightlightBrightnessState(state.nl.tbri);
+            if (typeof state.nl.mode === "number") setNightlightModeState(nightlightModes[state.nl.mode] ?? "fade");
+        }
+
+        if (state.udpn) {
+            setSyncSendState(!!state.udpn.send);
+            setSyncReceiveState(!!state.udpn.recv);
+        }
+
+        if (Array.isArray(state.seg)) {
+            const { list, leaves } = mapDeviceSegments(state.seg);
+
+            if (list.length > 0) {
+                leavesOnDevice.current = leaves;
+                segmentsRef.current = list;
+                setSegments(list);
+                setSelection((current) => {
+                    const ids = list.map((segment) => segment.id);
+                    const keep = current.filter((id) => ids.includes(id));
+                    return keep.length > 0 ? keep : [ids[0]];
+                });
+            }
+        }
+
+        if (typeof state.ps === "number") setActivePreset(presetsRef.current.find((preset) => preset.slot === state.ps)?.id ?? null);
+        if (typeof state.pl === "number" && Date.now() - playlistSince.current > 2500) setPlaylistOnState(state.pl >= 0);
+    }
+
+    function openSocket(target: string, id: number) {
+        const socket = new WebSocket(`ws://${target}/ws`);
+        wsRef.current = socket;
+
+        socket.onmessage = (event) => {
+            if (typeof event.data !== "string") return;
+
+            try {
+                const data = JSON.parse(event.data);
+                if (data.state && Date.now() - lastLocal.current > 350) applyDeviceState(data.state);
+                if (data.info?.wifi) setInfo((current) => ({ ...current, rssi: data.info.wifi.signal ?? current.rssi }));
+            } catch {}
+        };
+
+        socket.onclose = () => {
+            if (id === connId.current) setTimeout(() => id === connId.current && openSocket(target, id), 3000);
+        };
+    }
+
+    /* ---------- presets that live on the plant ---------- */
+
+    async function loadPresets(target: string, effectList: Effect[], paletteList: Palette[], stops: PalStops) {
+        try {
+            const data: Record<string, DevicePreset> = await request(target, `/presets.json?t=${Date.now()}`);
+            const keys = Object.keys(data).map(Number);
+            usedSlots.current = new Set(keys);
+
+            const names: Record<string, number> = {};
+            const list: Preset[] = keys
+                .filter((n) => n > 0 && data[String(n)]?.n !== undefined && !data[String(n)].playlist)
+                .sort((a, b) => a - b)
+                .map((slotNumber, index) => {
+                    const item = data[String(slotNumber)];
+                    const first = item.seg?.[0];
+                    const effect = first?.fx ?? 0;
+                    const palette = first?.pal ?? 0;
+
+                    // Presets named "1", "2"… get a real name from their effect and palette.
+                    const own = (item.n ?? "").trim();
+                    const effectName = effectList.find((e) => e.id === effect)?.name ?? "Custom effect";
+                    const paletteName = paletteList.find((p) => p.id === palette)?.name ?? "Custom palette";
+                    let name = own && !/^\d+$/.test(own) ? own : `${effectName} · ${paletteName}`;
+                    names[name] = (names[name] ?? 0) + 1;
+                    if (names[name] > 1) name += ` ${names[name]}`;
+
+                    const lit = stopList(stops[String(palette)]).filter((s) => s[1] + s[2] + s[3] > 60);
+                    const mid = lit[Math.floor(lit.length / 2)];
+                    const col = first?.col?.[0];
+                    const accent = palette && mid ? rgbToHex(mid[1], mid[2], mid[3]) : col ? rgbToHex(col[0], col[1], col[2]) : `hsl(${Math.round((index * 137.5) % 360)} 70% 58%)`;
+
+                    return { id: String(slotNumber), slot: slotNumber, name, effect, palette, accent };
+                });
+
+            presetsRef.current = list;
+            setPresets(list);
+            return list;
+        } catch {
+            return presetsRef.current;
+        }
+    }
+
+    function reloadPresets() {
+        const { effects: effectList, palettes: paletteList, stops } = catalogRef.current;
+        return loadPresets(ipRef.current, effectList, paletteList, stops);
+    }
+
+    /* ---------- connecting ---------- */
+
+    const closeDialog = () => { setDialog({ kind: "none" }); };
+
+    const openConnectDialog = () => {
+        setIpDraft(ip);
+        setDialog({ kind: "connect" });
+    };
+
+    async function connect(target: string) {
+        const id = ++connId.current;
+        wsRef.current?.close();
+        wsRef.current = null;
+        setConnecting(true);
+
+        try {
+            const [infoData, stateData, effectData, paletteData] = await Promise.all([
+                request(target, "/json/info"),
+                request(target, "/json/state"),
+                request(target, "/json/eff"),
+                request(target, "/json/pal"),
+            ]);
+            if (id !== connId.current) return;
+
+            const stops = await loadPalx(target);
+            const uptime = infoData.uptime ?? 0;
+
+            const deviceEffects = normalizeLiveEffects(effectData);
+            const devicePalettes = normalizeLivePalettes(paletteData, stops);
+            const effectList = deviceEffects.length > 0 ? deviceEffects : effects;
+            const paletteList = devicePalettes.length > 0 ? devicePalettes : palettes;
+
+            setEffectCatalog(effectList);
+            setPaletteCatalog(paletteList);
+            setPalStops(stops);
+            setIp(target);
+            ipRef.current = target;
+            localStorage.setItem(HOST_KEY, target);
+            setInfo({
+                name: infoData.name ?? "WLED",
+                ver: infoData.ver ?? "?",
+                leds: infoData.leds?.count ?? 0,
+                rssi: infoData.wifi?.signal ?? null,
+                uptime: `${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m`,
+            });
+
+            // Presets first, so the active preset can be marked when the state is applied.
+            await loadPresets(target, effectList, paletteList, stops);
+            if (id !== connId.current) return;
+
+            liveRef.current = true;
+            applyDeviceState(stateData);
+            setConnection("live");
+            openSocket(target, id);
+            closeDialog();
+            setToast(`Connected to ${target}`);
+        } catch {
+            if (id === connId.current) {
+                setConnection("offline");
+                setToast(`Can't reach ${target}`);
+            }
+        } finally {
+            if (id === connId.current) setConnecting(false);
+        }
+    }
+
+    /* ---------- controls ---------- */
+
+    const setPower = (value: boolean) => {
+        setPowerState(value);
+        push({ on: value });
+    };
+
+    const setBrightness = (value: number) => {
+        setBrightnessState(value);
+        pushThrottled("bri", { bri: value });
+    };
+
+    const setTransition = (value: number) => {
+        setTransitionState(value);
+        pushThrottled("transition", { transition: value });
+    };
+
+    const pushNightlight = (changes: Partial<typeof nlRef.current>, slider = false) => {
+        const next = { ...nlRef.current, ...changes };
+        nlRef.current = next;
+        const body = { nl: { on: next.on, dur: next.dur, mode: nightlightModes.indexOf(next.mode), tbri: next.tbri } };
+
+        if (slider) pushThrottled("nl", body);
+        else push(body);
+    };
+
+    const setNightlightOn = (value: boolean) => {
+        setNightlightOnState(value);
+        pushNightlight({ on: value });
+    };
+
+    const setNightlightMinutes = (value: number) => {
+        setNightlightMinutesState(value);
+        pushNightlight({ dur: value }, true);
+    };
+
+    const setNightlightBrightness = (value: number) => {
+        setNightlightBrightnessState(value);
+        pushNightlight({ tbri: value }, true);
+    };
+
+    const setNightlightMode = (value: NightlightMode) => {
+        setNightlightModeState(value);
+        pushNightlight({ mode: value });
+    };
+
+    const setSyncSend = (value: boolean) => {
+        setSyncSendState(value);
+        push({ udpn: { send: value, recv: syncReceive } });
+    };
+
+    const setSyncReceive = (value: boolean) => {
+        setSyncReceiveState(value);
+        push({ udpn: { send: syncSend, recv: value } });
+    };
+
+    // Starts a playlist of all your presets on the plant, or stops it.
+    const setPlaylistOn = (value: boolean) => {
+        setPlaylistOnState(value);
+        playlistSince.current = Date.now();
+        if (!liveRef.current) return;
+
+        if (!value) {
+            push({ pl: -1 });
+            return;
+        }
+
+        const slots = presetsRef.current.map((preset) => preset.slot);
+
+        if (slots.length === 0) {
+            setPlaylistOnState(false);
+            setToast("Save a preset first");
+            return;
+        }
+
+        push({
+            playlist: {
+                ps: slots,
+                dur: slots.map(() => playlistSeconds * 10),
+                transition: [transition],
+                repeat: playlistRepeat ? 0 : 1,
+                end: 0,
+            },
+        });
+        resync(600);
+    };
+
+    /**
+     * Updates the screen and sends the change. Presets usually give the plant a single segment,
+     * so the first change recreates the nine leaf segments (with the current look) before anything else.
+     */
+    function commitSegments(next: Segment[], patches: { id: number; changes: Partial<Segment> }[], slider = false) {
+        segmentsRef.current = next;
+        setSegments(next);
+        if (!liveRef.current) return;
+
+        if (!leavesOnDevice.current) {
+            leavesOnDevice.current = true;
+            push({
+                seg: next.map((segment) => ({
                     id: segment.id,
                     start: segment.start,
                     stop: segment.stop,
@@ -496,66 +973,14 @@ export default function App() {
                     sx: segment.speed,
                     ix: segment.intensity,
                 })),
-            }).catch(() => {
-                setConnection("offline");
-                setToast("Lost connection to controller");
             });
-        }, 250);
-
-        return () => clearTimeout(timeout);
-    }, [brightness, connection, ip, nightlightBrightness, nightlightMinutes, nightlightMode, nightlightOn, power, segments, syncReceive, syncSend, transition]);
-
-    const closeDialog = () => { setDialog({ kind: "none" }); };
-
-    const openConnectDialog = () => {
-        setIpDraft(ip);
-        setDialog({ kind: "connect" });
-    };
-
-    async function connect(target: string) {
-        setConnecting(true);
-
-        try {
-            const [infoData, stateData, effectData, paletteData] = await Promise.all([
-                request(target, "/json/info"),
-                request(target, "/json/state"),
-                request(target, "/json/eff"),
-                request(target, "/json/pal"),
-            ]);
-            const uptime = infoData.uptime ?? 0;
-
-            const deviceEffects = normalizeLiveEffects(effectData as Record<string, unknown> | undefined);
-            const devicePalettes = normalizeLivePalettes(paletteData as Record<string, unknown> | undefined);
-
-            if (Array.isArray(stateData?.seg) && stateData.seg.length > 0) {
-                const mappedSegments = stateData.seg.map((segment: DeviceSegmentState, index: number) => mapLiveSegment(segment, index));
-
-                if (mappedSegments.length > 1 || mappedSegments[0]?.stop !== 126) {
-                    setSegments(mappedSegments);
-                    setSelection([mappedSegments[0]?.id ?? 0]);
-                }
-            }
-
-            setEffectCatalog(deviceEffects.length > 0 ? deviceEffects : effects);
-            setPaletteCatalog(devicePalettes.length > 0 ? devicePalettes : palettes);
-            setIp(target);
-            setInfo({
-                name: infoData.name ?? "WLED",
-                ver: infoData.ver ?? "?",
-                leds: infoData.leds?.count ?? 0,
-                rssi: infoData.wifi?.rssi ?? null,
-                uptime: `${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m`,
-            });
-            firstPush.current = true;
-            setConnection("live");
-            closeDialog();
-            setToast(`Connected to ${target}`);
-        } catch {
-            setConnection("offline");
-            setToast(`Can't reach ${target}`);
-        } finally {
-            setConnecting(false);
+            return;
         }
+
+        const body = { seg: patches.map(({ id, changes }) => ({ id, ...toDevice(changes) })) };
+
+        if (slider) pushThrottled("seg" + patches.map((patch) => patch.id).join("-"), body);
+        else push(body);
     }
 
     const toggleLeaf = (id: number) => {
@@ -573,22 +998,33 @@ export default function App() {
     };
 
     const toggleSegment = (id: number) => {
-        setSegments((current) => current.map((segment) => (segment.id === id ? { ...segment, on: !segment.on } : segment)));
+        const segment = segmentsRef.current.find((item) => item.id === id);
+        if (!segment) return;
+
+        const changes = { on: !segment.on };
+        commitSegments(segmentsRef.current.map((item) => (item.id === id ? { ...item, ...changes } : item)), [{ id, changes }]);
     };
 
     const updateLeaves = (changes: Partial<Segment>) => {
-        setSegments((current) => current.map((segment) => (selection.includes(segment.id) ? { ...segment, ...changes } : segment)));
+        const next = segmentsRef.current.map((segment) => (selection.includes(segment.id) ? { ...segment, ...changes } : segment));
+        const slider = "speed" in changes || "intensity" in changes;
+        commitSegments(next, selection.map((id) => ({ id, changes })), slider);
     };
 
+    // Picking a colour switches those leaves off their palette, because a palette would hide the colour you picked.
     const setSlotColor = (hex: string) => {
-        setSegments((current) =>
-            current.map((segment) => {
-                if (!selection.includes(segment.id)) return segment;
+        const next = segmentsRef.current.map((segment) => {
+            if (!selection.includes(segment.id)) return segment;
 
-                const colors = [...segment.colors] as Slot;
-                colors[slot] = hex;
-                return { ...segment, colors };
-            }),
+            const colors = [...segment.colors] as Slot;
+            colors[slot] = hex;
+            return { ...segment, colors, palette: 0 };
+        });
+
+        commitSegments(
+            next,
+            selection.map((id) => ({ id, changes: { colors: next.find((segment) => segment.id === id)!.colors, palette: 0 } })),
+            true,
         );
     };
 
@@ -602,7 +1038,8 @@ export default function App() {
         setToast(`${preset.name} applied`);
 
         if (connection === "live") {
-            request(ip, "/json/state", { ps: preset.slot }).catch(() => {});
+            push({ ps: preset.slot });
+            resync();
         }
     };
 
@@ -618,9 +1055,21 @@ export default function App() {
 
     const savePreset = () => {
         const name = nameDraft.trim() || "Custom preset";
-        const slotNumber = presets.reduce((max, preset) => Math.max(max, preset.slot), 0) + 1;
+        let slotNumber = presets.reduce((max, preset) => Math.max(max, preset.slot), 0) + 1;
+
+        if (connection === "live") {
+            // Lowest free slot from 32 up, so the presets already on the plant are never overwritten.
+            slotNumber = FIRST_FREE_SLOT;
+            while ((usedSlots.current.has(slotNumber) || presets.some((preset) => preset.slot === slotNumber)) && slotNumber <= MAX_SLOT) slotNumber++;
+
+            if (slotNumber > MAX_SLOT) {
+                setToast("No free preset slots left");
+                return;
+            }
+        }
+
         const preset: Preset = {
-            id: `p-${Date.now()}`,
+            id: connection === "live" ? String(slotNumber) : `p-${Date.now()}`,
             slot: slotNumber,
             name,
             effect: leaf.effect,
@@ -634,7 +1083,9 @@ export default function App() {
         setToast("Preset saved to device");
 
         if (connection === "live") {
-            request(ip, "/json/state", { psave: slotNumber, n: name, ib: true, sb: true }).catch(() => {});
+            usedSlots.current.add(slotNumber);
+            push({ psave: slotNumber, n: name, ib: true, sb: true });
+            sleep(800).then(reloadPresets);
         }
     };
 
@@ -644,18 +1095,33 @@ export default function App() {
         const name = nameDraft.trim();
         if (!name) return;
 
+        const target = presets.find((preset) => preset.id === dialog.id);
         setPresets((current) => current.map((preset) => (preset.id === dialog.id ? { ...preset, name } : preset)));
         closeDialog();
         setToast("Preset renamed");
+
+        if (connection === "live" && target) {
+            // WLED has no rename call: apply the preset, then save it again under the same slot with the new name.
+            push({ ps: target.slot });
+            sleep(450).then(() => push({ psave: target.slot, n: name, ib: true, sb: true }));
+            sleep(1300).then(reloadPresets);
+        }
     };
 
     const deletePreset = () => {
         if (dialog.kind !== "delete") return;
 
+        const target = presets.find((preset) => preset.id === dialog.id);
         setPresets((current) => current.filter((preset) => preset.id !== dialog.id));
         if (activePreset === dialog.id) setActivePreset(null);
         closeDialog();
         setToast("Preset deleted");
+
+        if (connection === "live" && target) {
+            usedSlots.current.delete(target.slot);
+            push({ pdel: target.slot });
+            sleep(800).then(reloadPresets);
+        }
     };
 
     const openTimerDialog = (timer: Timer | null = null) => {
@@ -840,7 +1306,7 @@ export default function App() {
                         {segments.map((segment) => (
                             <div key={segment.id} className={cx("segment-row", selection.includes(segment.id) && "active")}>
                                 <button className="segment-main" onClick={() => setSelection([segment.id])}>
-                                    <span className="segment-dot" style={{ background: segment.colors[0] }} />
+                                    <span className="segment-dot" style={{ background: shownColors(segment)[0] }} />
                                     <span>
                                         <strong>{segment.name}</strong>
                                         <small>{`LED ${segment.start}–${segment.stop - 1}`}</small>
@@ -1001,6 +1467,10 @@ export default function App() {
                                 <button
                                     className="button secondary"
                                     onClick={() => {
+                                        connId.current++;
+                                        wsRef.current?.close();
+                                        wsRef.current = null;
+                                        localStorage.removeItem(HOST_KEY);
                                         setConnection("demo");
                                         closeDialog();
                                         setToast("Demo mode");
@@ -1008,7 +1478,7 @@ export default function App() {
                                 >
                                     Demo
                                 </button>
-                                <button className="button" disabled={connecting} onClick={() => connect(ipDraft.trim() || ip)}>
+                                <button className="button" disabled={connecting} onClick={() => connect(ipDraft.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "") || ip)}>
                                     {connecting ? "Connecting…" : "Connect"}
                                 </button>
                             </div>
@@ -1134,6 +1604,7 @@ export default function App() {
                         <div className="leaf-grid" role="group">
                             {segments.map((segment) => {
                                 const selected = selection.includes(segment.id);
+                                const shown = shownColors(segment);
 
                                 return (
                                     <button
@@ -1143,7 +1614,7 @@ export default function App() {
                                         onDoubleClick={() => setSelection([segment.id])}
                                         aria-pressed={selected}
                                     >
-                                        <span className="leaf-dot" style={{ background: `linear-gradient(135deg, ${segment.colors[0]}, ${segment.colors[1]})` }} />
+                                        <span className="leaf-dot" style={{ background: `linear-gradient(135deg, ${shown[0]}, ${shown[1]})` }} />
                                         <span className="leaf-name">Leaf {segment.id + 1}</span>
                                         <span className="leaf-check" aria-hidden="true">{selected ? "✓" : ""}</span>
                                     </button>
