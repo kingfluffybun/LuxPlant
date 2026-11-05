@@ -82,6 +82,12 @@ export default function SignupPage() {
                     setErrorMsg("This email address is already registered.");
                 } else {
                     setSuccessMsg("An email has  been sent to your inbox. Please check your email to verify your account.");
+                    
+                    // Clear input fields after successful signup
+                    setFirstName("");
+                    setLastName("");
+                    setEmail("");
+                    setPassword("");
                 }
             }
 

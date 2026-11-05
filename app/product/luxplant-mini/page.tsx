@@ -64,13 +64,29 @@ export default function LuxPlantMiniPage() {
 
     const handleAdd = async () => {
         if (!user) {
-            alert("You must be logged in to add items to the cart.");
+            // Guest user: store cart in localStorage
+            try {
+                const existing = JSON.parse(localStorage.getItem('cart') || '[]');
+                const idx = existing.findIndex((item: any) => item.productId === productId);
+                if (idx >= 0) {
+                    existing[idx].quantity = Math.min(10, existing[idx].quantity + quantity);
+                } else {
+                    existing.push({ productId, quantity });
+                }
+                localStorage.setItem('cart', JSON.stringify(existing));
+                // Dispatch event to update CartDrawer if open
+                const event = new CustomEvent(ADD_TO_CART_EVENT);
+                window.dispatchEvent(event);
+                alert('Added to cart (guest)');
+            } catch (err) {
+                console.error('Error adding to local cart:', err);
+            }
             return;
         } else if (user) {
             try {
                 await addToCart(productId, quantity);
             } catch (err) {
-                console.error("Error adding to cart:", err);
+                console.error('Error adding to cart:', err);
             }
         }
     };
