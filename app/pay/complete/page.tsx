@@ -13,7 +13,7 @@ export default function PaymentCompletePage() {
             <main className="payment-complete-main">
                 <section className="payment-complete-content" aria-labelledby="payment-complete-title">
                     <div className="payment-complete-icon" aria-hidden="true">
-                        <Check size={40} strokeWidth={3} />
+                        <Check size={56} strokeWidth={3} />
                     </div>
                     <span className="payment-status-badge">Awaiting verification</span>
                     <h1 id="payment-complete-title">Payment proof submitted</h1>
