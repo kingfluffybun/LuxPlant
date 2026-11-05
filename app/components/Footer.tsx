@@ -42,7 +42,7 @@ export default function Footer() {
                         <li><Link href="/#Product">Product</Link></li>
                         <li><Link href="/gallery">Gallery</Link></li>
                         <li><Link href="/#Docs">Docs</Link></li>
-                        <li><Link href="/#App">App</Link></li>
+                        <li><Link href="/app">App</Link></li>
                         <li><Link href="/about">About</Link></li>
                     </ul>
                 </div>
