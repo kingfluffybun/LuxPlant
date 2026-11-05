@@ -3,16 +3,20 @@
 import "../../public/css/login.css";
 import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
-import Link from "next/link";
 import Footer from "../components/Footer";
 import Navigation from "../components/Navigation";
 import { createClient } from "@/lib/supabase/client";
+import { TriangleAlert } from "lucide-react";
 import { useState, useEffect } from "react";
+
+type ResetPasswordField = "newPassword" | "confirmPassword";
+type ResetPasswordFieldErrors = Partial<Record<ResetPasswordField, string>>;
 
 export default function ResetPasswordPage() {
     const supabase = createClient();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState<ResetPasswordFieldErrors>({});
     const [success, setSuccess] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,21 +47,26 @@ export default function ResetPasswordPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setFieldErrors({});
         setSuccess("");
 
-        // Basic validation
-        if (!newPassword || !confirmPassword) {
-            setError("Please enter both passwords.");
+        if (!newPassword) {
+            setFieldErrors({ newPassword: "Enter a new password." });
+            return;
+        }
+
+        if (!confirmPassword) {
+            setFieldErrors({ confirmPassword: "Confirm your new password." });
             return;
         }
 
         if (newPassword.length < 8) {
-            setError("Password must be at least 8 characters long.");
+            setFieldErrors({ newPassword: "Password must be at least 8 characters long." });
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            setError("Passwords do not match.");
+            setFieldErrors({ confirmPassword: "Passwords do not match." });
             return;
         }
 
@@ -78,7 +87,9 @@ export default function ResetPasswordPage() {
         }
 
         if (missingRequirements.length > 0) {
-            setError(`Password must meet these requirements:\n${missingRequirements.join("\n")}`);
+            setFieldErrors({
+                newPassword: `Password must meet these requirements: ${missingRequirements.join(", ")}.`,
+            });
             return;
         }
 
@@ -139,13 +150,6 @@ export default function ResetPasswordPage() {
                             <p>Choose a new password for your account.</p>
                         </header>
 
-                        {/* Error Message */}
-                        {error && (
-                            <div className="login-error">
-                                ✗ {error}
-                            </div>
-                        )}
-
                         {/* Success Message */}
                         {success && (
                             <div className="login-success">
@@ -160,6 +164,12 @@ export default function ResetPasswordPage() {
                         {/* Password Reset Form */}
                         {!success && (
                             <form className="login-form" onSubmit={handleSubmit}>
+                                {error && (
+                                    <p className="login-error" role="alert">
+                                        <TriangleAlert size={16} aria-hidden="true" />
+                                        <span>{error}</span>
+                                    </p>
+                                )}
                                 <div className="login-form-group">
                                     <label htmlFor="new-password">New password</label>
                                     <input
@@ -168,13 +178,22 @@ export default function ResetPasswordPage() {
                                         name="newPassword"
                                         autoComplete="new-password"
                                         required
+                                        aria-invalid={Boolean(fieldErrors.newPassword)}
+                                        aria-describedby={fieldErrors.newPassword ? "reset-new-password-error" : undefined}
                                         value={newPassword}
                                         onChange={(e) => {
                                             setNewPassword(e.target.value);
                                             if (error) setError("");
+                                            setFieldErrors((current) => ({ ...current, newPassword: undefined }));
                                         }}
                                         placeholder="New password"
                                     />
+                                    {fieldErrors.newPassword && (
+                                        <p className="login-field-error" id="reset-new-password-error" role="alert">
+                                            <TriangleAlert size={16} aria-hidden="true" />
+                                            <span>{fieldErrors.newPassword}</span>
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="login-form-group">
@@ -185,13 +204,22 @@ export default function ResetPasswordPage() {
                                         name="confirmPassword"
                                         autoComplete="new-password"
                                         required
+                                        aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                                        aria-describedby={fieldErrors.confirmPassword ? "reset-confirm-password-error" : undefined}
                                         value={confirmPassword}
                                         onChange={(e) => {
                                             setConfirmPassword(e.target.value);
                                             if (error) setError("");
+                                            setFieldErrors((current) => ({ ...current, confirmPassword: undefined }));
                                         }}
                                         placeholder="Confirm new password"
                                     />
+                                    {fieldErrors.confirmPassword && (
+                                        <p className="login-field-error" id="reset-confirm-password-error" role="alert">
+                                            <TriangleAlert size={16} aria-hidden="true" />
+                                            <span>{fieldErrors.confirmPassword}</span>
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Password Strength */}
@@ -207,11 +235,10 @@ export default function ResetPasswordPage() {
                                     </div>
                                 </div>
 
-                                {/* Strength Recommendations */}
-                                {!success && error && missingRequirements.length > 0 ? (
+                                {!success && fieldErrors.newPassword && missingRequirements.length > 0 ? (
                                     <ul className="strength-hints">
-                                        {missingRequirements.map((req, index) => (
-                                            <li key={index} style={{ color: '#ef4444' }}>{req}</li>
+                                        {missingRequirements.map((requirement) => (
+                                            <li key={requirement}>{requirement}</li>
                                         ))}
                                     </ul>
                                 ) : null}

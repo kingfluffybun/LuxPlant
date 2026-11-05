@@ -110,6 +110,18 @@
         input:not([type="checkbox"]) {
             transition: padding 250ms ease;
         }
+        input[aria-invalid="true"] {
+            border-color: var(--error);
+            background-color: color-mix(in srgb, var(--error) 8%, var(--secondary-background));
+            color: var(--error-text);
+        }
+        &:has(input[aria-invalid="true"]) label {
+            color: var(--error-text);
+        }
+        input[aria-invalid="true"]:focus {
+            outline: 2px solid color-mix(in srgb, var(--error) 35%, transparent);
+            outline-offset: 1px;
+        }
         &:has(input:not([type="checkbox"]):not(:placeholder-shown)) {
             label {
                 opacity: 1;
@@ -120,8 +132,33 @@
                 padding-bottom: 4px;
             }
         }
-
+        .login-field-error {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--error-text);
+            font-size: 0.75rem;
+            line-height: 1.5;
+            margin: 4px 0;
+            svg {flex: 0 0 16px;}
+        }
     }
+    .login-form-group:has(.login-field-error) .show-password-button {
+        top: 24px;
+    }
+    .login-error,
+    .login-success {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    .login-error {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        color: var(--error-text);
+        svg {flex: 0 0 16px; margin-top: 4px;}
+    }
+    .login-success {color: var(--primary); text-align: center;}
     .login-remember-forgot {
         margin: 8px 0;
         display: flex;
@@ -203,7 +240,7 @@
 
 .password-strength-meter[data-level="1"] .password-strength-bar,
 .password-strength-meter[data-level="2"] .password-strength-bar {
-    background-color: #ef4444;
+    background-color: var(--error);
 }
 
 .password-strength-meter[data-level="3"] .password-strength-bar,
@@ -232,5 +269,5 @@
 }
 
 .strength-hints li {
-    color: var(--primary);
+    color: var(--error);
 }

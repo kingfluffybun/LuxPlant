@@ -18,6 +18,8 @@
   --text-body: #bbb;
   --text-muted: #888;
   --border: #ffffff1a;
+  --error: #ef4444;
+  --error-text: #fca5a5;
 }
 
 p {
@@ -111,4 +113,3 @@ input[type=text], input[type=password], input[type=email], select {
     display: flex; justify-content: center; align-items: center;
     border-radius: 999px; border: 2px solid currentColor;
 }
-

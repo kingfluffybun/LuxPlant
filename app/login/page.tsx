@@ -5,7 +5,7 @@ import "../../app/globals.css";
 import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
 
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -24,13 +24,26 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleOAuthLogin = async (provider: string) => {
+  const handleOAuthLogin = async (provider: "google") => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: provider as any });
+      const { error } = await supabase.auth.signInWithOAuth({ provider });
       if (error) throw error;
-    } catch (err: any) {
-      setErrorMsg(err.message ?? "OAuth login failed");
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : "OAuth login failed");
     }
+  };
+
+  const getLoginErrorMessage = (error: unknown) => {
+    const message = error instanceof Error ? error.message : "Login failed";
+    const code = typeof error === "object" && error !== null && "code" in error
+      ? String(error.code)
+      : "";
+
+    if (code === "invalid_credentials" || message.toLowerCase() === "invalid login credentials") {
+      return "Invalid login credentials";
+    }
+
+    return message;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,8 +55,8 @@ export default function LoginPage() {
       if (error) throw error;
 
       router.push("/");
-    } catch (err: any) {
-      setErrorMsg(err.message ?? "Login failed");
+    } catch (err: unknown) {
+      setErrorMsg(getLoginErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -57,15 +70,18 @@ export default function LoginPage() {
                         <div className="login-header">
                             <h1>Welcome Back</h1>
                             <p className="login-signup-link">
-                                Don't have an account yet? <Link href="/signup">Sign up now</Link>
+                                Don&apos;t have an account yet? <Link href="/signup">Sign up now</Link>
                             </p>
                         </div>
 
-                        {/* Error message */}
-                        {errorMsg && <p className="login-error" style={{ color: "red" }}>{errorMsg}</p>}
-
                         <form className="login-form" onSubmit={handleSubmit}>
-                            <button className="login-social-button" onClick={(e) => { e.preventDefault(); handleOAuthLogin("google"); }}>
+                            {errorMsg && (
+                                <p className="login-error" role="alert">
+                                    <TriangleAlert size={16} aria-hidden="true" />
+                                    <span>{errorMsg}</span>
+                                </p>
+                            )}
+                            <button type="button" className="login-social-button" onClick={() => handleOAuthLogin("google")}>
                                 <Image src="/assets/google-logo.svg" alt="Google" width={32} height={32} />
                                 <p>Continue with Google</p>
                             </button>
@@ -84,7 +100,10 @@ export default function LoginPage() {
                                     required 
                                     placeholder="Email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                      setEmail(e.target.value);
+                                      setErrorMsg(null);
+                                    }}
                                 />
                             </div>
                             <div className="login-form-group">
@@ -97,7 +116,10 @@ export default function LoginPage() {
                                     required 
                                     placeholder="Password" 
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => {
+                                      setPassword(e.target.value);
+                                      setErrorMsg(null);
+                                    }}
                                 />
                                 <button className="show-password-button"
                                     type="button" 
