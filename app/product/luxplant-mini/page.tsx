@@ -7,6 +7,7 @@ import Footer from "../../components/Footer";
 import FaqSection from "../../components/FaqSection";
 import Navigation, { ADD_TO_CART_EVENT } from "../../components/Navigation";
 import ProductDropdown from "./ProductDropdown";
+import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { addToCart } from "@/utils/supabaseCart";
 import { useEffect, useRef, useState } from "react";
@@ -32,6 +33,7 @@ const formatPrice = (amount: number) =>
 
 export default function LuxPlantMiniPage() {
     const [selectedImage, setSelectedImage] = useState(0);
+    const [user, setUser] = useState<any>(null);
     const [trackIndex, setTrackIndex] = useState(1);
     const [transitionEnabled, setTransitionEnabled] = useState(true);
     const [quantity, setQuantity] = useState(1);
@@ -49,11 +51,27 @@ export default function LuxPlantMiniPage() {
     const cartPrice = formatPrice(totalPrice);
     const productId = "luxplant-mini";
 
+    const supabase = createClient();
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: {user}, error } = await supabase.auth.getUser();
+            setUser(user);
+        }
+
+        getUser();
+    }, []);
+
     const handleAdd = async () => {
-        try {
-            await addToCart(productId, quantity);
-        } catch (err) {
-            console.error("Error adding to cart:", err);
+        if (!user) {
+            alert("You must be logged in to add items to the cart.");
+            return;
+        } else if (user) {
+            try {
+                await addToCart(productId, quantity);
+            } catch (err) {
+                console.error("Error adding to cart:", err);
+            }
         }
     };
 

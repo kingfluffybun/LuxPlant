@@ -19,7 +19,6 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
   const [cartQuantity, setCartQuantity] = useState<number | null>(null);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
   const cartTriggerRef = useRef<HTMLButtonElement>(null);
@@ -47,39 +46,6 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
 
     getUser();
   }, []);
-
-  useEffect(() => {
-    if (!user) {
-      setCartCount(0);
-      return;
-    }
-
-    const fetchCount = async () => {
-        const { data, error } = await supabase
-            .from("cart_items")
-            .select("id", { count: "exact", head: true})
-            .eq("user_id", user.id);
-
-        if (!error) setCartCount(data?.length ?? 0);
-    };
-
-    fetchCount();
-
-    const subscription = supabase
-        .channel(`public:cart_items:user=${user.id}`)
-        .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'cart_items', filter: `user_id=eq.${user.id}` },
-            payload => {
-                fetchCount();
-            }
-        )
-        .subscribe();
-
-    return () => {
-        supabase.removeChannel(subscription);
-    };
-  }, [user]);
 
   useEffect(() => {
     if (!transparentAtTop) {
@@ -124,25 +90,6 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, [isProductMenuOpen]);
-
-  useEffect(() => {
-    const handleAddToCart = (event: Event) => {
-      if (!(event instanceof CustomEvent)) {
-        return;
-      }
-
-      const quantity = event.detail?.quantity;
-      if (typeof quantity !== "number" || !Number.isFinite(quantity)) {
-        return;
-      }
-
-      setCartQuantity(Math.min(10, Math.max(1, Math.floor(quantity))));
-      setIsCartOpen(true);
-    };
-
-    window.addEventListener(ADD_TO_CART_EVENT, handleAddToCart);
-    return () => window.removeEventListener(ADD_TO_CART_EVENT, handleAddToCart);
-  }, []);
 
   const isNavTransparent = isOverHero && !isProductMenuOpen;
   const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
@@ -243,42 +190,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
             <User />
           </Link>
         )}
-        <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} >
-            <ShoppingCart />
-            {cartCount > 0 && (
-                <span
-                    className="badge"
-                    style={{
-                        backgroundColor: "var(--primary)",
-                        color: "var(--on-primary)",
-                        borderRadius: "50%",
-                        padding: "0.2em 0.5em",
-                        fontSize: "0.75em",
-                        marginLeft: "0.5em",
-                    }}
-                >
-                    {cartCount}
-                </span>
-            )}
-        </button>
-
-        {cartCount > 0 && (
-            <Link href="/checkout">
-                <button
-                    className="link-button-primary"
-                    style={{
-                        backgroundColor: "var(--primary)",
-                        color: "var(--on-primary)",
-                        border: "none",
-                        padding: "0.5rem 1rem",
-                        borderRadius: "4px",
-                        marginLeft: "1rem",
-                    }}
-                >
-                    Checkout
-                </button>
-            </Link>
-        )}
+        <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} > <ShoppingCart /> </button>
       </div>
       {isCartOpen && ( <CartDrawer quantity={cartQuantity} onQuantityChange={setCartQuantity} triggerRef={cartTriggerRef} isLoggedIn={Boolean(user)} onClose={() => setIsCartOpen(false)} />
       )}

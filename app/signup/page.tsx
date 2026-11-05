@@ -73,16 +73,16 @@ export default function SignupPage() {
             });
 
             if (error) {
-                if (error.message.includes("User already registered") || 
-                    error.message.includes("An account already exists with that email address")) {
-                    setFieldErrors({ email: "Email already registered" });
-                    setErrorMsg(`An account with the email ${email} already exists. Please log in instead.`);
-                } else {
-                    const formattedError = formatSignupError(error.message);
-                    setErrorMsg(formattedError);
-                }
+                const formattedError = formatSignupError(error.message);
+                setErrorMsg(formattedError);
             } else if (data.user) {
-                setSuccessMsg("Signup successful! Please check your email to confirm your account.");
+                const emailExists = data.user.identities && data.user.identities.length === 0;
+
+                if (emailExists) {
+                    setErrorMsg("This email address is already registered.");
+                } else {
+                    setSuccessMsg("An email has  been sent to your inbox. Please check your email to verify your account.");
+                }
             }
 
         } catch (err: unknown) {
