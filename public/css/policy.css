@@ -16,7 +16,7 @@
 .policy-page-main {
     grid-area: main;
     width: min(100%, 960px);
-    margin: 0 auto;
+    margin-inline: auto;
     padding: 64px 32px 96px;
 }
 
@@ -36,7 +36,6 @@
 }
 
 .policy-document h1 {
-    margin: 0;
     font-size: 3rem;
 }
 
@@ -53,7 +52,6 @@
 }
 
 .policy-document h2 {
-    margin: 0;
     font-size: 1.75rem;
 }
 

@@ -185,10 +185,6 @@
     line-height: 1.4;
 }
 
-.cart-drawer-item .cart-drawer-discount-note {
-    margin: 0;
-}
-
 .cart-drawer-item .checkout-discount-note svg {
     flex: 0 0 20px;
     width: 20px;
