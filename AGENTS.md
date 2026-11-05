@@ -230,7 +230,7 @@ This document contains everything known about the LuxPlant product line. Use onl
 
 ## 1. What LuxPlant Is
 
-LuxPlant is a 3D-printed, LED-lit artificial plant. Each leaf is printed in light-diffusing filament and lit from the inside by addressable RGB LEDs, so the plant can glow in any color and run animated light effects. It is sold in two ways: as a fully built unit, or as STL files for people who want to print and assemble it themselves.
+LuxPlant is a 3D-printed, LED-lit artificial plant. Each leaf is printed in light-diffusing filament and lit from the inside by addressable RGB LEDs, so the plant can glow in any color and run animated light effects. LuxPlant is currently focused on selling fully built units and no longer sells STL files.
 
 The project is made by an independent creator based in the Philippines. The creator describes it as a labor of love: filament and printing time are expensive locally, and support from buyers goes directly into developing the larger LuxPlant Standard.
 
@@ -286,30 +286,9 @@ There are two product versions:
 - 18 months. If something breaks, it is replaced, no questions asked.
 - Free repair even after the warranty has expired.
 
-## 4. STL Files and Memberships
+## 4. No Longer Offered: STL Files and Memberships
 
-For people who prefer to print the LuxPlant Mini themselves.
-
-### STL Files: $5
-- A $5 one-time purchase for the LuxPlant Mini STL files. (Creator believes this is a lifetime purchase; confirm before publishing.)
-- Personal use only (see terms below).
-
-### Commercial License: $10 per month
-A monthly membership for people who want to sell the physical prints themselves.
-
-- Be one of the pioneers and early supporters of LuxPlant at a discounted price.
-- Grants permission to sell the physical prints of the LuxPlant Mini, valid only while the membership is active.
-- Does not allow reselling or redistributing the STL files.
-- Discount when the LuxPlant Standard Version is completed.
-- Progress updates.
-- Exclusive technical support when you run into problems printing the LuxPlant.
-- Exclusive group chat for commercial license holders: connect with other commercial creators, share business tips, and discuss industry trends.
-
-### Terms of Use
-- STL buyers get lifetime PERSONAL USE of the LuxPlant Mini STL files.
-- Selling physical copies without a commercial license is NOT allowed.
-- You may print for family and friends, but you must not redistribute the files, sell the files, or sell physical copies to anyone.
-- The fully modular stem feature is exclusive to people who purchased the files and supported the project. It is not released anywhere else.
+LuxPlant no longer sells STL files or commercial licenses/memberships. The current focus is on selling fully built LuxPlant products.
 
 ## 5. Bill of Materials (Self-Build LuxPlant Mini)
 
@@ -459,7 +438,6 @@ If the bottom of the leaf is blocked or has infill, the LED strip cannot be inse
 ## 9. LuxPlant Standard (Coming Soon)
 - Planned to have 21 leaves.
 - Planned to have thicker stems with different diameters for the branches.
-- Commercial license members get a discount when it is completed.
 - No release date or price has been announced.
 
 ## 10. Brand Voice Notes
@@ -469,7 +447,6 @@ If the bottom of the leaf is blocked or has infill, the LED strip cannot be inse
 ## 11. Not Yet Decided or Unknown
 - Standard release date and price
 - Whether the delivery fee is flat and whether delivery covers all of the Philippines
-- Whether the $5 STL purchase is definitively lifetime
 - Print and assembly time for self-builders
 - BOM details: currency of the prices, prices for the fuses, DC jack, push button, JST connectors, resistor, capacitor, and plug-and-play controller, the resistor quantity (the sheet's note says "3 for each data line" and the quantity cell is blank), filament grams per printed part, and the unit of the stem wiring lengths
 - Product photos and demo video (a short demo video exists but is not included here)

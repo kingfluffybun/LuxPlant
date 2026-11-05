@@ -248,3 +248,8 @@
   color: inherit;
   cursor: pointer;
 }
+
+.avatar {
+  border-radius: 999px;
+  overflow: hidden;
+}

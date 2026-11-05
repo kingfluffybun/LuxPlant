@@ -5,7 +5,7 @@ import "../../../public/css/footer.css";
 import "../../../public/css/product.css";
 import Footer from "../../components/Footer";
 import FaqSection from "../../components/FaqSection";
-import Navigation from "../../components/Navigation";
+import Navigation, { ADD_TO_CART_EVENT } from "../../components/Navigation";
 import ProductDropdown from "./ProductDropdown";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -184,7 +184,12 @@ export default function LuxPlantMiniPage() {
                 </div>
                 <div className="product-details">
                     <h1>LuxPlant Mini</h1>
-                    <form>
+                    <form onSubmit={(event) => {
+                        event.preventDefault();
+                        window.dispatchEvent(new CustomEvent(ADD_TO_CART_EVENT, {
+                            detail: { quantity: numericQuantity },
+                        }));
+                    }}>
                         <fieldset className="product-options">
                             <div className="product-quantity">
                                 <div className="product-quantity-label">

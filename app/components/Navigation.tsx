@@ -12,11 +12,14 @@ type NavigationProps = {
   transparentAtTop?: boolean;
 };
 
+export const ADD_TO_CART_EVENT = "luxplant:add-to-cart";
+
 export default function Navigation({ transparentAtTop = false }: NavigationProps) {
   const [isOverHero, setIsOverHero] = useState(transparentAtTop);
   const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState<number | null>(null);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
   const cartTriggerRef = useRef<HTMLButtonElement>(null);
   const productMenuRef = useRef<HTMLDivElement>(null);
@@ -88,6 +91,25 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
     };
   }, [isProductMenuOpen]);
 
+  useEffect(() => {
+    const handleAddToCart = (event: Event) => {
+      if (!(event instanceof CustomEvent)) {
+        return;
+      }
+
+      const quantity = event.detail?.quantity;
+      if (typeof quantity !== "number" || !Number.isFinite(quantity)) {
+        return;
+      }
+
+      setCartQuantity(Math.min(10, Math.max(1, Math.floor(quantity))));
+      setIsCartOpen(true);
+    };
+
+    window.addEventListener(ADD_TO_CART_EVENT, handleAddToCart);
+    return () => window.removeEventListener(ADD_TO_CART_EVENT, handleAddToCart);
+  }, []);
+
   const isNavTransparent = isOverHero && !isProductMenuOpen;
   const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
 
@@ -158,7 +180,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       </div>
       <div className="site-nav-icons">
         {user ? (
-          <Link href="/account" aria-label="Account">
+          <Link href="/account" aria-label="Account" className="avatar">
             { userData?.avatarUrl ? (
                 <Image src={userData?.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
             ) : userData?.firstName && userData?.lastName ? (
@@ -168,11 +190,12 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         fontWeight: 'bold',
                         fontSize: '14px',
                         width: '32px',
-                        height: '32px'
+                        height: '32px',
+                        borderRadius: '999px',
+                        border: '1px solid var(--border)'
                     }}
                 >
                     {userData.firstName.charAt(0)}{userData.lastName.charAt(0).toUpperCase()}
@@ -188,7 +211,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
         )}
         <button ref={cartTriggerRef} type="button" className="site-nav-cart" aria-label="Open shopping cart" onClick={() => setIsCartOpen(true)} > <ShoppingCart /> </button>
       </div>
-      {isCartOpen && ( <CartDrawer triggerRef={cartTriggerRef} isLoggedIn={Boolean(user)} onClose={() => setIsCartOpen(false)} />
+      {isCartOpen && ( <CartDrawer quantity={cartQuantity} onQuantityChange={setCartQuantity} triggerRef={cartTriggerRef} isLoggedIn={Boolean(user)} onClose={() => setIsCartOpen(false)} />
       )}
     </nav>
   );

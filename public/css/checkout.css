@@ -166,6 +166,9 @@
 }
 
 .order-summary {
+    position: sticky;
+    top: 24px;
+    align-self: start;
     display: flex;
     flex-direction: column;
     gap: 16px;
