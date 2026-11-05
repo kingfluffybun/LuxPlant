@@ -19,6 +19,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartOpenRef = useRef(false);
   const [cartQuantity, setCartQuantity] = useState<number | null>(null);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -129,12 +130,17 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       }
 
       setCartQuantity(Math.min(10, Math.max(1, Math.floor(quantity))));
-      setIsCartOpen(true);
+      cartOpenRef.current = true;
     };
 
     window.addEventListener(ADD_TO_CART_EVENT, handleAddToCart);
     return () => window.removeEventListener(ADD_TO_CART_EVENT, handleAddToCart);
   }, []);
+
+  // Sync ref to state on every render
+  useEffect(() => {
+    setIsCartOpen(cartOpenRef.current);
+  }, [cartOpenRef.current]);
 
   const isNavTransparent = isOverHero && !isProductMenuOpen;
   const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
