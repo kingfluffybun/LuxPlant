@@ -188,12 +188,6 @@ export default function CartDrawer({
                                     )}
                                 </div>
                             </div>
-                            {!isLoggedIn && (
-                                <div className="cart-drawer-login">
-                                    <b>Have an account?</b>
-                                    <p><Link href="/login" onClick={onClose}>Log in</Link> to checkout faster.</p>
-                                </div>
-                            )}
                             <div className="cart-drawer-summary">
                                 <div className="cart-drawer-estimated-total">
                                     <span>Estimated total</span>
