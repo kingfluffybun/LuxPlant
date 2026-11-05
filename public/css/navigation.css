@@ -249,6 +249,75 @@
 }
 
 .avatar {
-  border-radius: 999px;
-  overflow: hidden;
+    img {border-radius: 999px; width: 32px; height: 32px;}
+    cursor: pointer;
+    &:hover {
+        filter: brightness(1.2);
+    }
+}
+
+.profile-dropdown {
+    display: flex;
+    position: relative;
+}
+
+.profile-menu {
+    position: absolute;
+    background-color: var(--nav-footer);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    top: calc(100% + 8px);
+    right: 0;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    padding: 12px;
+    gap: 8px;
+    transform-origin: top right;
+    animation: profile-menu-open 180ms ease-out both;
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 auto;
+            p {line-height: 1.25;}
+            .profile-name {font-size: 1rem; color: var(--text-main);}
+            .profile-email {font-size: 1rem; color: var(--text-muted);}
+        }
+        .user-avatar {
+            border-radius: 999px;
+        }
+    }
+}
+
+.site-nav-transparent .profile-menu {
+    background-color: var(--secondary-background-transparent);
+    backdrop-filter: blur(4px);
+}
+
+@keyframes profile-menu-open {
+    from {
+        opacity: 0;
+        transform: translateY(-0.5rem) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.profile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    p {color: var(--text-main); font-size: 1rem;}
+    svg {color: var(--text-muted);}
+    &:hover {background-color: var(--border);}
+    padding: 8px;
+    border-radius: 12px;
 }
