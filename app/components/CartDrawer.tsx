@@ -5,6 +5,9 @@ import { createPortal } from "react-dom";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
+
+export const ADD_TO_CART_EVENT = "add-to-cart";
 
 type CartDrawerProps = {
     onClose: () => void;
@@ -32,20 +35,121 @@ export default function CartDrawer({
     quantity,
     onQuantityChange,
 }: CartDrawerProps) {
+    const supabase = createClient();
+
     const [isClosing, setIsClosing] = useState(false);
     const isClosingRef = useRef(false);
     const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const dialogRef = useRef<HTMLDivElement>(null);
     const onCloseRef = useRef(onClose);
     const previousOverflow = useRef<string | null>(null);
-    const subtotal = UNIT_PRICE * (quantity ?? 0);
-    const discount = quantity !== null && quantity >= 2
+
+    type CartItem = {
+        id: string;
+        product_id: string;
+        quantity: number;
+    };
+
+    const [items, setItems] = useState<CartItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    const firstItem = items[0] ?? null;
+    const currentQty = firstItem?.quantity ?? null;
+
+    const subtotal = UNIT_PRICE * (currentQty ?? 0);
+    const discount = currentQty !== null && currentQty >= 2
         ? Math.round(subtotal * MULTI_UNIT_DISCOUNT)
         : 0;
-    const hasQuantityDiscount = quantity !== null && quantity >= 2;
+    const hasQuantityDiscount = currentQty !== null && currentQty >= 2;
     const shippingFee = hasQuantityDiscount ? 0 : SHIPPING_FEE;
     const totalPrice = subtotal + shippingFee - discount;
     const amountSaved = discount + (hasQuantityDiscount ? SHIPPING_FEE : 0);
+
+    const loadCart = async (uid: string) => {
+        const { data: cartId, error: cartErr } = await supabase
+            .rpc("get_or_create_cart", { p_user_id: uid })
+            .single();
+        if (cartErr) {
+            console.error("Failed to get/create cart:", cartErr);
+            setItems([]);
+            setLoading(false);
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from("cart_items")
+            .select("id, product_id, quantity")
+            .eq("cart_id", cartId);
+        if (error) {
+            console.error("Failed to load cart items:", error);
+            setItems([]);
+        } else {
+            setItems(data as CartItem[]);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        const fetchUserAndCart = async () => {
+            const { data: { user }, error } = await supabase.auth.getUser();
+
+            if (error || !user) {
+                setUserId(null);
+                setItems([]);
+                setLoading(false);
+                return;
+            }
+
+            setUserId(user.id);
+            await loadCart(user.id);
+        };
+
+        fetchUserAndCart();
+    }, []);
+
+    useEffect(() => {
+        const handler = () => {
+            if (userId) loadCart(userId);
+        };
+        window.addEventListener(ADD_TO_CART_EVENT, handler);
+        return () => window.removeEventListener(ADD_TO_CART_EVENT, handler);
+    }, [userId]);
+
+    useEffect(() => {
+        if (!userId) return;
+
+        const initRealtime = async () => {
+            const { data: cartId } = await supabase
+                .rpc("get_or_create_cart", { p_user_id: userId })
+                .single();
+
+            const channel = supabase
+                .channel(`public:cart_items_user_${userId}`)
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "*",
+                        schema: "public",
+                        table: "cart_items",
+                        filter: `cart_id=eq.${cartId}`,
+                    },
+                    () => {
+                        loadCart(userId);
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
+        };
+
+        const cleanupPromise = initRealtime();
+        return () => {
+            cleanupPromise.then((cleanup) => cleanup?.());
+        };
+    }, [userId]);
 
     useEffect(() => {
         onCloseRef.current = onClose;
@@ -118,16 +222,33 @@ export default function CartDrawer({
         };
     }, [closeDrawer, triggerRef]);
 
+    const updateQuantity = async (itemId: string, newQty: number) => {
+        if (newQty <= 0) {
+            const {error} = await supabase
+                .from("cart_items")
+                .delete()
+                .eq("id", itemId);
+            if (error) console.error("Delete failed:", error);
+        } else {
+            const {error} = await supabase
+                .from("cart_items")
+                .update({quantity: newQty})
+                .eq("id", itemId);
+            if (error) console.error("Update failed:", error);
+        }
+        if (userId) loadCart(userId);
+    }
+
     return createPortal(
         <div className={`cart-drawer-container${isClosing ? " is-closing" : ""}`}>
             <button type="button" className="cart-drawer-overlay" aria-label="Close cart" onClick={closeDrawer} />
-            <div ref={dialogRef} className={`cart-drawer${quantity === null ? "" : " has-items"}`} role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" >
+            <div ref={dialogRef} className={`cart-drawer${firstItem ? " has-items" : ""}`} role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" >
                 <div className="cart-drawer-header">
                     <h2 id="cart-drawer-title"><ShoppingCart size={32}/>Cart</h2>
                     <button type="button" className="cart-drawer-close" aria-label="Close cart" onClick={closeDrawer} > <X size={32} aria-hidden="true" /> </button>
                 </div>
-                <div className={`cart-drawer-content${quantity === null ? " is-empty" : " has-items"}`}>
-                    {quantity === null ? (
+                <div className={`cart-drawer-content${firstItem ? " has-items" : " is-empty"}`}>
+                    {firstItem === null ? (
                         <>
                             <h3>Your cart is empty.</h3>
                             <Link href="/product/luxplant-mini" className="link-button-primary" onClick={onClose}>Continue shopping</Link>
@@ -146,7 +267,7 @@ export default function CartDrawer({
                             <div className="order-summary-item cart-drawer-item">
                                 <div className="order-item-details">
                                     <div className="order-item">
-                                        <span>{quantity}</span>
+                                        <span>{firstItem.quantity}</span>
                                         <Image src="/assets/plants/luxplant-mini-01.jpeg" alt="LuxPlant Mini" width={64} height={64} />
                                     </div>
                                     <div className="order-item-info">
@@ -154,22 +275,22 @@ export default function CartDrawer({
                                         <div className="checkout-quantity-input">
                                             <input
                                                 type="number"
-                                                min="1"
+                                                min="0"
                                                 max={MAX_QUANTITY}
-                                                value={quantity}
+                                                value={firstItem.quantity}
                                                 onChange={(event) => {
-                                                    const nextQuantity = Number(event.currentTarget.value);
-                                                    if (Number.isFinite(nextQuantity)) {
-                                                        onQuantityChange(Math.min(MAX_QUANTITY, Math.max(1, Math.floor(nextQuantity))));
+                                                    const newQty = Number(event.currentTarget.value);
+                                                    if (Number.isFinite(newQty)) {
+                                                        updateQuantity(firstItem.id, Math.min(MAX_QUANTITY, Math.max(0, Math.floor(newQty))));
                                                     }
                                                 }}
                                                 aria-label="Number of plants"
                                             />
                                             <div className="checkout-quantity-controls">
-                                                <button type="button" aria-label="Decrease quantity" onClick={() => onQuantityChange(Math.max(1, quantity - 1))} >
+                                                <button type="button" aria-label="Decrease quantity" onClick={() => updateQuantity(firstItem.id, Math.max(0, firstItem.quantity - 1))} >
                                                     <Minus aria-hidden="true" size={12} />
                                                 </button>
-                                                <button type="button" aria-label="Increase quantity" onClick={() => onQuantityChange(Math.min(MAX_QUANTITY, quantity + 1))} >
+                                                <button type="button" aria-label="Increase quantity" onClick={() => updateQuantity(firstItem.id, Math.min(MAX_QUANTITY, firstItem.quantity + 1))} >
                                                     <Plus aria-hidden="true" size={12} />
                                                 </button>
                                             </div>
@@ -178,7 +299,7 @@ export default function CartDrawer({
                                 </div>
                                 <div className="order-item-prices">
                                     <div className="cart-drawer-price-row">
-                                        {quantity >= 2 && (
+                                        {firstItem.quantity >= 2 && (
                                             <p className="order-item-original-price">{formatPrice(subtotal)}</p>
                                         )}
                                         <p className="order-item-price">{formatPrice(subtotal - discount)}</p>
