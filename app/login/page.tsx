@@ -54,6 +54,10 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
+      // Clear input fields after successful login
+      setEmail("");
+      setPassword("");
+      
       router.push("/");
     } catch (err: unknown) {
       setErrorMsg(getLoginErrorMessage(err));

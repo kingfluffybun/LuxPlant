@@ -110,7 +110,19 @@ export default function CartDrawer({
 
     useEffect(() => {
         const handler = () => {
-            if (userId) loadCart(userId);
+            if (userId) {
+                loadCart(userId);
+            } else {
+                // Guest: load cart from localStorage
+                const stored = JSON.parse(localStorage.getItem('cart') || '[]');
+                const mapped = stored.map((it: any) => ({
+                    id: it.productId,
+                    product_id: it.productId,
+                    quantity: it.quantity,
+                }));
+                setItems(mapped);
+                setLoading(false);
+            }
         };
         window.addEventListener(ADD_TO_CART_EVENT, handler);
         return () => window.removeEventListener(ADD_TO_CART_EVENT, handler);
