@@ -29,14 +29,15 @@ export default function GalleryPage() {
                                 {column.map((photoNumber) => {
                                     const extension = photoNumber <= 8 ? "png" : "jpg";
                                     return (
-                                        <Image
-                                            key={photoNumber}
-                                            src={`/assets/plants/plant-${photoNumber}.${extension}`}
-                                            width={400}
-                                            height={400}
-                                            alt={`LuxPlant gallery photo ${photoNumber}`}
-                                            priority={photoNumber <= 3}
-                                        />
+                                        <div className="gallery-image" key={photoNumber}>
+                                            <Image
+                                                src={`/assets/plants/plant-${photoNumber}.${extension}`}
+                                                width={400}
+                                                height={400}
+                                                alt={`LuxPlant gallery photo ${photoNumber}`}
+                                                priority={photoNumber <= 3}
+                                            />
+                                        </div>
                                     );
                                 })}
                             </div>

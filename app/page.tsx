@@ -53,7 +53,9 @@ export default function Home() {
                         <Link href={"/"} className="link-button-primary">Read the full story</Link>
                     </div>
                     <div className="section-img">
-                        <div className="image-placeholder"></div>
+                        <div className="image-placeholder">
+                            <Image src={"/assets/plants/plant-3.png"} width={400} height={400} alt="LuxPlant Image"></Image>
+                        </div>
                     </div>
                 </section>
                 <section className="center-section landing-page-section">
@@ -63,16 +65,28 @@ export default function Home() {
                     </div>
                     <div className="gallery-preview">
                         <div>
-                            <Image src="/assets/plants/plant-1.png" width={400} height={400} alt="LuxPlant Gallery Image 1" />
-                            <Image src="/assets/plants/plant-5.png" width={400} height={400} alt="LuxPlant Gallery Image 5" />
+                            <div className="gallery-image">
+                                <Image src="/assets/plants/plant-1.png" width={400} height={400} alt="LuxPlant Gallery Image 1" />
+                            </div>
+                            <div className="gallery-image">
+                                <Image src="/assets/plants/plant-5.png" width={400} height={400} alt="LuxPlant Gallery Image 5" />
+                            </div>
                         </div>
                         <div>
-                            <Image src="/assets/plants/plant-2.png" width={400} height={400} alt="LuxPlant Gallery Image 2" />
-                            <Image src="/assets/plants/plant-4.png" width={400} height={400} alt="LuxPlant Gallery Image 4" />
+                            <div className="gallery-image">
+                                <Image src="/assets/plants/plant-2.png" width={400} height={400} alt="LuxPlant Gallery Image 2" />
+                            </div>
+                            <div className="gallery-image">
+                                <Image src="/assets/plants/plant-4.png" width={400} height={400} alt="LuxPlant Gallery Image 4" />
+                            </div>
                         </div>
                         <div>
-                            <Image src="/assets/plants/plant-3.png" width={400} height={400} alt="LuxPlant Gallery Image 3" />
-                            <Image src="/assets/plants/plant-6.png" width={400} height={400} alt="LuxPlant Gallery Image 6" />
+                            <div className="gallery-image">
+                                <Image src="/assets/plants/plant-3.png" width={400} height={400} alt="LuxPlant Gallery Image 3" />
+                            </div>
+                            <div className="gallery-image">
+                                <Image src="/assets/plants/plant-6.png" width={400} height={400} alt="LuxPlant Gallery Image 6" />
+                            </div>
                         </div>
                     </div>
                     <Link href="/gallery" className="link-button-primary">View Full Gallery</Link>
@@ -104,24 +118,33 @@ export default function Home() {
                     </div>
                     <div className="testimonial-preview">
                         <div className="testimonial-card">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                            <div className="customer">
+                                <Image src={"/assets/customer-testimonial/darwin.webp"} alt="darwin" width={1000} height={1000}></Image>
+                            </div>
+                            <p>“Very helpful seller. Product is as advertised, easy to program, good for an alternative kind of ambient lighting that you might not see anywhere.”</p>
                             <div>
-                                <b>Clarence Jerald G. Luna</b>
-                                <p>LuxPlant Maker</p>
+                                <b>Darwin Nathaniel Chua</b>
+                                <p>LuxPlant Customer</p>
                             </div>
                         </div>
                         <div className="testimonial-card">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                            <div className="customer">
+                                <Image src={"/assets/customer-testimonial/nerrie.jpg"} alt="jpg" width={1000} height={1000}></Image>
+                            </div>
+                            <p>“Honestly, so beautiful. The pink glow melts right into my pink room, and the leaves look even softer in person. It feels like part of the room, not just a lamp. Thank you so much!”</p>
                             <div>
-                                <b>Kevenly H. Luistro</b>
-                                <p>LuxPlant Maker</p>
+                                <b>Nerrie Lour Monsale </b>
+                                <p>LuxPlant Customer</p>
                             </div>
                         </div>
                         <div className="testimonial-card">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                            <div className="customer">
+                                <Image src={"/assets/customer-testimonial/discord-guy.jpg"} alt="jpg" width={1000} height={1000}></Image>
+                            </div>
+                            <p>“Big hit with the kids. We had a family party and the kids spent an hour running back and forth between the flower pot. The adults were also impressed, but didn't do as much running.”</p>
                             <div>
-                                <b>Christian Patrick T. Panti</b>
-                                <p>LuxPlant Maker</p>
+                                <b>Thom</b>
+                                <p>LuxPlant Customer</p>
                             </div>
                         </div>
                     </div>
