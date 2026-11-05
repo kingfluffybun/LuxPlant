@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, ChevronDown, ShoppingCart, User, ShoppingBag, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import CartDrawer from "./CartDrawer";
 import "../../public/css/cart-drawer.css";
 
@@ -28,6 +29,7 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const supabase = createClient();
+  const router = useRouter();
 
 //   Get user data from supabase
   useEffect(() => {
@@ -131,16 +133,24 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
 
       setCartQuantity(Math.min(10, Math.max(1, Math.floor(quantity))));
       cartOpenRef.current = true;
+      setIsCartOpen(cartOpenRef.current);
     };
 
     window.addEventListener(ADD_TO_CART_EVENT, handleAddToCart);
     return () => window.removeEventListener(ADD_TO_CART_EVENT, handleAddToCart);
   }, []);
 
-  // Sync ref to state on every render
-  useEffect(() => {
-    setIsCartOpen(cartOpenRef.current);
-  }, [cartOpenRef.current]);
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setUserData(null);
+      setIsProfileMenuOpen(false);
+      router.push("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const isNavTransparent = isOverHero && !isProductMenuOpen;
   const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
@@ -253,10 +263,10 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
                   <p>Profile</p>
                 </Link>
                 <hr></hr>
-                <Link href="/logout" className="profile-menu-item">
-                    <LogOut />
-                    <p>Sign Out</p>
-                </Link>
+                <button onClick={handleLogout} className="profile-menu-item">
+                  <LogOut />
+                  <p>Sign Out</p>
+                </button>
               </div>
             )}
           </div>
