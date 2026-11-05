@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clipboard, Download, Upload } from "lucide-react";
+import { Clipboard, Download, Phone, Upload } from "lucide-react";
 import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
 import "../../public/css/payment.css";
@@ -14,6 +14,12 @@ type PaymentPageProps = {
 };
 
 const paymentMethods = {
+    "cash-on-delivery": {
+        name: "Cash on delivery",
+        accountName: "",
+        accountDetails: "",
+        qr: null,
+    },
     "bank-transfer": {
         name: "Bank Transfer",
         accountName: "Mark Jerson Luna",
@@ -46,17 +52,21 @@ function CopyButton() {
 export default async function PaymentPage({ searchParams }: PaymentPageProps) {
     const query = await searchParams;
     const orderNumber = "LP-000123";
-    const methodKey = query.method === "bank-transfer" || query.method === "maribank"
-        ? "bank-transfer"
-        : query.method === "paypal"
-            ? "paypal"
-            : "gcash";
+    const methodKey = query.method === "cash-on-delivery"
+        ? "cash-on-delivery"
+        : query.method === "bank-transfer" || query.method === "maribank"
+            ? "bank-transfer"
+            : query.method === "paypal"
+                ? "paypal"
+                : "gcash";
     const method = paymentMethods[methodKey];
     const methodLogo = methodKey === "gcash"
         ? "/assets/GCash.svg"
         : methodKey === "bank-transfer"
             ? "/assets/MariBank.svg"
-            : "/assets/PayPal.svg";
+            : methodKey === "paypal"
+                ? "/assets/PayPal.svg"
+                : null;
 
     return (
         <div className="payment-page-layout">
@@ -64,25 +74,72 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
             <main className="payment-page-main">
                 <header className="payment-page-header">
                     <div className="payment-order-meta">
-                        <span className="payment-status-badge">Awaiting payment</span>
+                        <span className="payment-status-badge">{methodKey === "cash-on-delivery" ? "Phone verification" : "Awaiting payment"}</span>
                         <span>Order {orderNumber}</span>
                     </div>
-                    <h1>Complete your payment</h1>
-                    <p>Pay the exact amount, then upload a screenshot of your payment. We confirm your order once the payment is verified.</p>
-                    <p className="payment-deadline">
+                    <h1>{methodKey === "cash-on-delivery" ? "Confirm your delivery phone" : "Complete your payment"}</h1>
+                    <p>
+                        {methodKey === "cash-on-delivery"
+                            ? "Enter your phone number and the one-time code to confirm your cash-on-delivery order."
+                            : "Pay the exact amount, then upload a screenshot of your payment. We confirm your order once the payment is verified."}
+                    </p>
+                    {methodKey !== "cash-on-delivery" && <p className="payment-deadline">
                         Please pay within 24 hours, or this order is cancelled automatically.
                         {" "}Time left: <span className="payment-countdown">23:58:41</span>
-                    </p>
+                    </p>}
                 </header>
 
                 <div className="payment-columns">
                     <div className="payment-left-column">
+                        {methodKey === "cash-on-delivery" ? (
+                            <section className="payment-card payment-cod-card">
+                                <div className="payment-card-heading">
+                                    <div>
+                                        <h2>Verify your phone number</h2>
+                                    </div>
+                                    <Phone size={32} aria-hidden="true" />
+                                </div>
+                                <div className="payment-cod-form">
+                                    <div className="payment-reference-field">
+                                        <label htmlFor="cod-phone">Mobile phone number</label>
+                                        <input
+                                            id="cod-phone"
+                                            name="phone"
+                                            type="tel"
+                                            autoComplete="tel"
+                                            placeholder="+63 9XX XXX XXXX"
+                                            required
+                                        />
+                                    </div>
+                                    <button type="button" className="payment-secondary-button">
+                                        Send OTP
+                                    </button>
+                                    <div className="payment-reference-field">
+                                        <label htmlFor="cod-otp">One-time password</label>
+                                        <input
+                                            id="cod-otp"
+                                            name="otp"
+                                            type="text"
+                                            inputMode="numeric"
+                                            autoComplete="one-time-code"
+                                            placeholder="Enter the 6-digit code"
+                                            maxLength={6}
+                                            required
+                                        />
+                                    </div>
+                                    <button type="button" className="link-button-primary payment-submit-button">
+                                        Verify and confirm order
+                                    </button>
+                                </div>
+                            </section>
+                        ) : (
+                            <>
                         <section className="payment-card payment-method-card">
                             <div className="payment-card-heading">
                                 <div>
                                     <h2>Pay with {method.name}</h2>
                                 </div>
-                                <Image src={methodLogo} alt={method.name} width={40} height={40} className="payment-method-logo" />
+                                {methodLogo && <Image src={methodLogo} alt={method.name} width={40} height={40} className="payment-method-logo" />}
                             </div>
                             <div className={`payment-method-body${method.qr ? "" : " is-paypal"}`}>
                                 {method.qr && (
@@ -172,6 +229,8 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
                                 <p>Attach it above and submit.</p>
                             </div>
                         </section>
+                            </>
+                        )}
                     </div>
 
                     <aside className="payment-right-column">
@@ -201,8 +260,12 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
                         </section>
 
                         <section className="payment-card payment-after-submit">
-                            <h2>After you submit</h2>
-                            <p>We check your proof against our records. Your order moves to Processing once the payment is verified. You can follow every update in your profile.</p>
+                            <h2>{methodKey === "cash-on-delivery" ? "After phone verification" : "After you submit"}</h2>
+                            <p>
+                                {methodKey === "cash-on-delivery"
+                                    ? "Your confirmed order will be prepared for delivery. Pay the courier when your LuxPlant arrives."
+                                    : "We check your proof against our records. Your order moves to Processing once the payment is verified. You can follow every update in your profile."}
+                            </p>
                             <Link href="/account" className="payment-text-link">View order status</Link>
                         </section>
 

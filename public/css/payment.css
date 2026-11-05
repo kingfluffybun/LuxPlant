@@ -121,6 +121,25 @@
     font-size: 1rem;
 }
 
+.payment-cod-card > .payment-card-heading > svg {
+    flex: 0 0 auto;
+    color: var(--primary);
+}
+
+.payment-cod-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-cod-form .payment-reference-field {
+    margin: 0;
+}
+
+.payment-cod-form .payment-secondary-button {
+    min-height: 44px;
+}
+
 .payment-page-header {
     max-width: 800px;
     margin-bottom: 32px;
