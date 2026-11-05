@@ -15,6 +15,7 @@ A practical checklist for making interfaces look designed without being a design
 - Text: main `#eee`, body `#bbb`, muted `#888`.
 - Fonts: Montserrat for headings, Roboto for body.
 - Prefer plain CSS with variables. Tailwind is optional.
+- Do not add or modify `@media` queries while the UI is still being developed; the user will handle responsive styling once everything is final.
 - Writing preference: no em-dashes in any prose.
 - Solid primary buttons use dark text (`#121212`). White on `#5A9A0A` fails the 4.5:1 contrast target for normal text.
 - For UI styling, use `rem` values only in quarter-rem increments (for example `0.75rem`, `1rem`, `1.25rem`, `1.5rem`, `1.75rem`, `2rem`). Do not use other fractional `rem` values.
