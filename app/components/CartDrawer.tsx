@@ -242,13 +242,18 @@ export default function CartDrawer({
     return createPortal(
         <div className={`cart-drawer-container${isClosing ? " is-closing" : ""}`}>
             <button type="button" className="cart-drawer-overlay" aria-label="Close cart" onClick={closeDrawer} />
-            <div ref={dialogRef} className={`cart-drawer${firstItem ? " has-items" : ""}`} role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" >
+            <div ref={dialogRef} className={`cart-drawer${firstItem ? " has-items" : loading ? " is-loading" : ""}`} role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" >
                 <div className="cart-drawer-header">
                     <h2 id="cart-drawer-title"><ShoppingCart size={32}/>Cart</h2>
                     <button type="button" className="cart-drawer-close" aria-label="Close cart" onClick={closeDrawer} > <X size={32} aria-hidden="true" /> </button>
                 </div>
-                <div className={`cart-drawer-content${firstItem ? " has-items" : " is-empty"}`}>
-                    {firstItem === null ? (
+                <div className={`cart-drawer-content${firstItem ? " has-items" : loading ? " is-loading" : " is-empty"}`}>
+                    {loading ? (
+                        <div className="cart-drawer-loading" role="status" aria-live="polite">
+                            <span className="cart-drawer-spinner" aria-hidden="true" />
+                            <p>Loading your cart...</p>
+                        </div>
+                    ) : firstItem === null ? (
                         <>
                             <h3>Your cart is empty.</h3>
                             <Link href="/product/luxplant-mini" className="link-button-primary" onClick={onClose}>Continue shopping</Link>
