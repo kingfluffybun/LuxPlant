@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ChevronDown, ShoppingCart, User } from "lucide-react";
+import { ArrowUpRight, ChevronDown, ShoppingCart, User, ShoppingBag, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useRef, useState } from "react";
 import CartDrawer from "./CartDrawer";
@@ -21,8 +21,10 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartQuantity, setCartQuantity] = useState<number | null>(null);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const cartTriggerRef = useRef<HTMLButtonElement>(null);
   const productMenuRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const supabase = createClient();
 
@@ -90,6 +92,49 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, [isProductMenuOpen]);
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) {
+      return;
+    }
+
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (event.target instanceof Node && !profileMenuRef.current?.contains(event.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isProfileMenuOpen]);
+
+  useEffect(() => {
+    const handleAddToCart = (event: Event) => {
+      if (!(event instanceof CustomEvent)) {
+        return;
+      }
+
+      const quantity = event.detail?.quantity;
+      if (typeof quantity !== "number" || !Number.isFinite(quantity)) {
+        return;
+      }
+
+      setCartQuantity(Math.min(10, Math.max(1, Math.floor(quantity))));
+      setIsCartOpen(true);
+    };
+
+    window.addEventListener(ADD_TO_CART_EVENT, handleAddToCart);
+    return () => window.removeEventListener(ADD_TO_CART_EVENT, handleAddToCart);
+  }, []);
 
   const isNavTransparent = isOverHero && !isProductMenuOpen;
   const isOverHeroWithTransparentBehavior = transparentAtTop && isOverHero;
@@ -161,30 +206,54 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
       </div>
       <div className="site-nav-icons">
         {user ? (
-          <Link href="/account" aria-label="Account" className="avatar">
-            { userData?.avatarUrl ? (
-                <Image src={userData?.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
-            ) : userData?.firstName && userData?.lastName ? (
-                <span 
-                    className="user-avatar initials-avatar"
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 'bold',
-                        fontSize: '14px',
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '999px',
-                        border: '1px solid var(--border)'
-                    }}
-                >
-                    {userData.firstName.charAt(0)}{userData.lastName.charAt(0).toUpperCase()}
+          <div className="profile-dropdown" ref={profileMenuRef}>
+            <button
+              type="button"
+              aria-label={isProfileMenuOpen ? "Close profile menu" : "Open profile menu"}
+              aria-expanded={isProfileMenuOpen}
+              aria-controls="profile-menu"
+              className="avatar"
+              onClick={() => setIsProfileMenuOpen((isOpen) => !isOpen)}
+            >
+              {userData?.avatarUrl ? (
+                <Image src={userData.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
+              ) : userData?.firstName && userData?.lastName ? (
+                <span className="user-avatar initials-avatar">
+                  {userData.firstName.charAt(0)}{userData.lastName.charAt(0).toUpperCase()}
                 </span>
-            ) : (
-                <User />
+              ) : (
+                <User aria-hidden="true" />
+              )}
+            </button>
+            {isProfileMenuOpen && (
+              <div className="profile-menu" id="profile-menu">
+                <div className="profile-header">
+                  {userData?.avatarUrl && (
+                    <Image src={userData.avatarUrl} alt="User Avatar" width={32} height={32} className="user-avatar" />
+                  )}
+                  <div className="profile-info">
+                    <p className="profile-name">{userData?.firstName} {userData?.lastName}</p>
+                    <p className="profile-email">{userData?.email}</p>
+                  </div>
+                  
+                </div>
+                <hr></hr>
+                <Link href="/order" className="profile-menu-item">
+                  <ShoppingBag />
+                  <p>My Orders</p>
+                </Link>
+                <Link href="/order" className="profile-menu-item">
+                  <User />
+                  <p>Profile</p>
+                </Link>
+                <hr></hr>
+                <Link href="/logout" className="profile-menu-item">
+                    <LogOut />
+                    <p>Sign Out</p>
+                </Link>
+              </div>
             )}
-          </Link>
+          </div>
         ) : (
           <Link href="/login" aria-label="Account">
             <User />
