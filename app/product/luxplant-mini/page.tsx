@@ -8,6 +8,7 @@ import FaqSection from "../../components/FaqSection";
 import Navigation, { ADD_TO_CART_EVENT } from "../../components/Navigation";
 import ProductDropdown from "./ProductDropdown";
 import Image from "next/image";
+import { addToCart } from "@/utils/supabaseCart";
 import { useEffect, useRef, useState } from "react";
 import { ShoppingCart, Check, Siren, Clock, Phone, ChevronLeft, ChevronRight, Minus, Plus, Dot } from "lucide-react"
 
@@ -33,7 +34,7 @@ export default function LuxPlantMiniPage() {
     const [selectedImage, setSelectedImage] = useState(0);
     const [trackIndex, setTrackIndex] = useState(1);
     const [transitionEnabled, setTransitionEnabled] = useState(true);
-    const [quantity, setQuantity] = useState("1");
+    const [quantity, setQuantity] = useState(1);
     const [quantityOption, setQuantityOption] = useState<"single" | "multiple">("single");
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
@@ -46,6 +47,15 @@ export default function LuxPlantMiniPage() {
         ? Math.round(subtotal * (1 - MULTI_UNIT_DISCOUNT))
         : subtotal;
     const cartPrice = formatPrice(totalPrice);
+    const productId = "luxplant-mini";
+
+    const handleAdd = async () => {
+        try {
+            await addToCart(productId, quantity);
+        } catch (err) {
+            console.error("Error adding to cart:", err);
+        }
+    };
 
     const trackSlides = [
         productSlides[productSlides.length - 1],
@@ -119,12 +129,12 @@ export default function LuxPlantMiniPage() {
 
     function selectQuantityOption(option: "single" | "multiple") {
         setQuantityOption(option);
-        setQuantity(option === "single" ? "1" : String(Math.max(2, Number(quantity) || 2)));
+        setQuantity(option === "single" ? 1 : Math.max(2, quantity || 2));
     }
 
-    function updateQuantity(value: string) {
+    function updateQuantity(value: number) {
         setQuantity(value);
-        if (value === "1") {
+        if (value === 1) {
             setQuantityOption("single");
         } else if (Number(value) > 1) {
             setQuantityOption("multiple");
@@ -133,7 +143,7 @@ export default function LuxPlantMiniPage() {
 
     function adjustQuantity(amount: number) {
         const nextQuantity = Math.min(10, Math.max(1, (Number(quantity) || 1) + amount));
-        updateQuantity(String(nextQuantity));
+        updateQuantity(Number(nextQuantity));
     }
 
     return (
@@ -219,7 +229,7 @@ export default function LuxPlantMiniPage() {
                                     </label>
                                 </div>
                                 {quantityOption === "multiple" && <div className="product-quantity-input">
-                                    <input type="number" name="quantity" min="1" max="10" value={quantity} onChange={(event) => updateQuantity(event.currentTarget.value)} onBlur={() => { if (!quantity) { updateQuantity("1"); } else if (Number(quantity) > 10) { updateQuantity("10"); } }} aria-label="Number of plants" />
+                                    <input type="number" name="quantity" min="1" max="10" value={quantity} onChange={(event) => updateQuantity(Number(event.currentTarget.value))} onBlur={() => { if (!quantity) { updateQuantity(1); } else if (Number(quantity) > 10) { updateQuantity(10); } }} aria-label="Number of plants" />
                                     <div className="product-quantity-input-controls">
                                         <button type="button" aria-label="Decrease quantity" onClick={() => adjustQuantity(-1)}>
                                             <Minus aria-hidden="true" />
@@ -232,7 +242,7 @@ export default function LuxPlantMiniPage() {
                             </div>
                         </fieldset>
                         <div className="product-actions">
-                            <button type="submit" className="link-button-primary">
+                            <button type="submit" className="link-button-primary" onClick={handleAdd}>
                                 Add to Cart <ShoppingCart />
                                 <Dot /> {cartPrice}
                             </button>

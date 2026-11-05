@@ -16,94 +16,81 @@ type SignupField = "email" | "password";
 type SignupFieldErrors = Partial<Record<SignupField, string>>;
 
 function formatSignupError(message: string) {
-  const characterClasses: [string, string][] = [
-    ["abcdefghijklmnopqrstuvwxyz", "lowercase letters"],
-    ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "uppercase letters"],
-    ["0123456789", "numbers"],
-    ["!@#$%^&*()_+-=[]{};'" + "\\:" + "\"|<>?,./`~", "symbols"],
-  ];
+    const characterClasses: [string, string][] = [
+        ["abcdefghijklmnopqrstuvwxyz", "lowercase letters"],
+        ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "uppercase letters"],
+        ["0123456789", "numbers"],
+        ["!@#$%^&*()_+-=[]{};'" + "\\:" + "\"|<>?,./`~", "symbols"],
+    ];
 
-  return characterClasses.reduce(
-    (formatted, [characters, label]) => formatted.replaceAll(characters, label),
-    message
-  );
+    return characterClasses.reduce(
+        (formatted, [characters, label]) => formatted.replaceAll(characters, label),
+        message
+    );
 }
 
 export default function SignupPage() {
-  const supabase = createClient();
+    const supabase = createClient();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<SignupFieldErrors>({});
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState<SignupFieldErrors>({});
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [successMsg, setSuccessMsg] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
-  const showAuthError = (error: unknown) => {
-    const message = formatSignupError(error instanceof Error ? error.message : "Signup failed");
-    const code = typeof error === "object" && error !== null && "code" in error
-      ? String(error.code)
-      : "";
-    const normalized = `${code} ${message}`.toLowerCase();
+    const handleOAuthSignup = async (provider: "google") => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({ provider });
+            if (error) throw error;
+        } catch (err: unknown) {
+            setErrorMsg(err instanceof Error ? err.message : "OAuth signup failed");
+        }
+    };
 
-    setSuccessMsg(null);
-    if (
-      normalized.includes("email") ||
-      normalized.includes("already registered") ||
-      normalized.includes("already exists")
-    ) {
-      setFieldErrors({ email: message });
-      setErrorMsg(null);
-    } else if (normalized.includes("password") || normalized.includes("weak_password")) {
-      setFieldErrors({ password: message });
-      setErrorMsg(null);
-    } else {
-      setFieldErrors({});
-      setErrorMsg(message);
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setFieldErrors({});
+        setErrorMsg(null);
+        setSuccessMsg(null);
+        
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { 
+                        first_name: firstName, 
+                        last_name: lastName, 
+                        role: "member",
+                    },
+                    emailRedirectTo: `${window.location.origin}/login`,
+                },
+            });
 
-  const handleOAuthSignup = async (provider: "google") => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
-      if (error) throw error;
-    } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : "OAuth signup failed");
-    }
-  };
+            if (error) {
+                if (error.message.includes("User already registered") || 
+                    error.message.includes("An account already exists with that email address")) {
+                    setFieldErrors({ email: "Email already registered" });
+                    setErrorMsg(`An account with the email ${email} already exists. Please log in instead.`);
+                } else {
+                    const formattedError = formatSignupError(error.message);
+                    setErrorMsg(formattedError);
+                }
+            } else if (data.user) {
+                setSuccessMsg("Signup successful! Please check your email to confirm your account.");
+            }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setFieldErrors({});
-    setErrorMsg(null);
-    setSuccessMsg(null);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { 
-            first_name: firstName, 
-            last_name: lastName, 
-            role: "member",
-          },
-          emailRedirectTo: `${window.location.origin}/login`,
-        },
-      });
-      if (error) throw error;
-
-      setSuccessMsg("Signup successful! Please check your email to confirm your account.");
-
-    } catch (err: unknown) {
-      showAuthError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        } catch (err: unknown) {
+            setErrorMsg(err instanceof Error ? err.message : "An error occurred during signup");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="auth-page-layout">
@@ -180,9 +167,9 @@ export default function SignupPage() {
                                     aria-describedby={fieldErrors.email ? "signup-email-error" : undefined}
                                     value={email}
                                     onChange={(e) => {
-                                      setEmail(e.target.value);
-                                      setFieldErrors((current) => ({ ...current, email: undefined }));
-                                      setErrorMsg(null);
+                                        setEmail(e.target.value);
+                                        setFieldErrors((current) => ({ ...current, email: undefined }));
+                                        setErrorMsg(null);
                                     }}
                                 />
                                 {fieldErrors.email && (
@@ -205,9 +192,9 @@ export default function SignupPage() {
                                     aria-describedby={fieldErrors.password ? "signup-password-error" : undefined}
                                     value={password}
                                     onChange={(e) => {
-                                      setPassword(e.target.value);
-                                      setFieldErrors((current) => ({ ...current, password: undefined }));
-                                      setErrorMsg(null);
+                                        setPassword(e.target.value);
+                                        setFieldErrors((current) => ({ ...current, password: undefined }));
+                                        setErrorMsg(null);
                                     }}
                                 />
                                 {fieldErrors.password && (
