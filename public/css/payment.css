@@ -11,9 +11,114 @@
 
 .payment-page-main {
     width: min(1280px, 100%);
+    height: 100vh;
     margin: 0 auto;
     padding: 48px 24px 80px;
     flex: 1;
+}
+
+.payment-complete-main {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 64px 24px 80px;
+    flex: 1;
+}
+
+.payment-complete-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(100%, 680px);
+    text-align: center;
+}
+
+.payment-complete-icon {
+    display: grid;
+    place-items: center;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--text-main);
+}
+
+.payment-complete-content > .payment-status-badge {
+    margin-bottom: 16px;
+}
+
+.payment-complete-content > h1 {
+    margin-bottom: 12px;
+    font-size: 2.25rem;
+}
+
+.payment-complete-message {
+    max-width: 55ch;
+    margin-bottom: 32px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.payment-complete-summary {
+    width: 100%;
+    padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--primary) 55%, var(--border));
+    border-radius: 16px;
+    background: var(--secondary-background);
+    text-align: left;
+}
+
+.payment-complete-summary h2 {
+    margin-bottom: 8px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.payment-complete-example {
+    margin-bottom: 20px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.payment-complete-product,
+.payment-complete-details > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.payment-complete-product {
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text-main);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.payment-complete-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.payment-complete-details dt {
+    color: var(--text-body);
+}
+
+.payment-complete-details dd {
+    color: var(--text-main);
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.payment-complete-home {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 32px;
+    font-size: 1rem;
 }
 
 .payment-page-header {
@@ -631,118 +736,4 @@
 
 .order-confirmation-card .link-button-primary {
     margin-top: 16px;
-}
-
-@media (max-width: 900px) {
-    .payment-columns {
-        grid-template-columns: minmax(0, 1fr) 320px;
-        gap: 16px;
-    }
-
-    .payment-method-body {
-        grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1fr);
-        gap: 16px;
-    }
-}
-
-@media (max-width: 760px) {
-    .payment-page-main {
-        padding: 32px 20px 56px;
-    }
-
-    .payment-columns {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .payment-left-column,
-    .payment-right-column {
-        display: contents;
-    }
-
-    .payment-method-card { order: 1; }
-    .payment-upload-card,
-    .payment-submitted-card { order: 2; }
-    .payment-steps { order: 3; }
-    .payment-order-summary { order: 4; width: 100%; }
-    .payment-after-submit { order: 5; width: 100%; }
-    .payment-help { order: 6; width: 100%; }
-
-    .payment-method-body {
-        grid-template-columns: 1fr;
-    }
-
-    .payment-qr-column {
-        width: min(232px, 100%);
-        margin: 0 auto;
-    }
-
-    .payment-detail-list {
-        margin-top: 8px;
-    }
-}
-
-@media (max-width: 540px) {
-    .payment-page-main {
-        padding: 24px 16px 40px;
-    }
-
-    .payment-page-header {
-        margin-bottom: 24px;
-    }
-
-    .payment-page-header h1 {
-        font-size: 2rem;
-    }
-
-    .payment-card,
-    .payment-state-card {
-        padding: 18px;
-    }
-
-    .payment-steps {
-        grid-template-columns: 1fr;
-    }
-
-    .payment-step-card {
-        display: grid;
-        grid-template-columns: 28px 1fr;
-        column-gap: 12px;
-    }
-
-    .payment-step-number {
-        grid-row: span 2;
-        margin: 0;
-    }
-
-    .payment-step-card h3 {
-        align-self: center;
-    }
-
-    .payment-step-card > p {
-        grid-column: 2;
-    }
-
-    .payment-copy-row {
-        align-items: flex-start;
-    }
-
-    .payment-copy-row > .payment-amount {
-        font-size: 1.5rem;
-    }
-
-    .payment-file-preview {
-        grid-template-columns: 64px minmax(0, 1fr);
-    }
-
-    .payment-preview-image {
-        width: 64px;
-        height: 64px;
-    }
-
-    .payment-remove-file {
-        grid-column: 2;
-        justify-self: start;
-    }
 }
