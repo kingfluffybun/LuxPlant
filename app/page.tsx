@@ -151,7 +151,7 @@ export default function Home() {
                 </section>
                 <section className="text-image-section landing-page-section landing-page-section-secondary app-promo-section">
                     <div className="section-img">
-                        <Image src={"/assets/AppMockup-2.webp"} width={3200} height={2400} alt="Preview of the LuxPlant app" unoptimized></Image>
+                        <Image src={"/assets/AppMockup.webp"} width={1024} height={768} alt="Preview of the LuxPlant app"></Image>
                     </div>
                     <div className="section-text">
                         <h1>Your plant, controlled from your pocket</h1>
