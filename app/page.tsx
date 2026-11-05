@@ -29,8 +29,8 @@ export default function Home() {
                             <h1>A plant that grows in color, powered by light</h1>
                             <p>LuxPlant is a fully 3D-printed LED plant — modular stems, diffused glowing leaves, and full control over every color and animation.</p>
                             <div>
-                                <Link href={"/"} className="link-button-primary">Get Started</Link>
-                                <Link href={"/"} className="link-button-secondary">Learn More</Link>
+                                <Link href={"/product/luxplant-mini"} className="link-button-primary">Shop Now</Link>
+                                <Link href="#story" className="link-button-secondary">Learn More</Link>
                             </div>
                         </div>
                     </div>
@@ -44,7 +44,7 @@ export default function Home() {
                         {isHeroTextVisible ? <EyeOff size={24} aria-hidden="true" /> : <Eye size={24} aria-hidden="true" />}
                     </button>
                 </div>
-                <section className="text-image-section landing-page-section landing-page-section-secondary">
+                <section id="story" className="text-image-section landing-page-section landing-page-section-secondary">
                     <div className="section-text">
                         <h1>Built out of a shipping problem</h1>
                         <p>This started as a gift — a Fluora LED Plant that couldn't ship to my country. 
@@ -142,7 +142,7 @@ export default function Home() {
                         <h1>Ready to bring your own LuxPlant to life?</h1>
                         <p>Bring home a ready-to-enjoy LuxPlant with glowing leaves, customizable colors, and app-based control. Choose the plant that fits your space and make it your own.</p>
                     </div>
-                    <Link href={"/"} className="link-button-primary" style={{ width: "600px" }}>Get Started</Link>
+                    <Link href={"/product/luxplant-mini"} className="link-button-primary" style={{ width: "600px" }}>Buy Now</Link>
                 </section>
                 <Footer />
             </main>

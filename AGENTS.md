@@ -17,6 +17,9 @@ A practical checklist for making interfaces look designed without being a design
 - Prefer plain CSS with variables. Tailwind is optional.
 - Writing preference: no em-dashes in any prose.
 - Solid primary buttons use dark text (`#121212`). White on `#5A9A0A` fails the 4.5:1 contrast target for normal text.
+- For UI styling, use `rem` values only in quarter-rem increments (for example `0.75rem`, `1rem`, `1.25rem`, `1.5rem`, `1.75rem`, `2rem`). Do not use other fractional `rem` values.
+- Avoid `<strong>` for visual emphasis. Use a neutral element with `font-weight: 600` instead.
+- Avoid eyebrow/kicker labels above headings unless explicitly requested.
 
 ---
 

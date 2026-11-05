@@ -5,10 +5,12 @@ import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
-import { Landmark, HandCoins, Minus, Plus, Tag, BadgePercent } from "lucide-react";
+import { HandCoins, Minus, Plus, Tag, BadgePercent } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import CheckoutRegionSelect from "../components/CheckoutRegionSelect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const UNIT_PRICE = 3500;
 const MAX_QUANTITY = 10;
@@ -24,6 +26,8 @@ const formatPrice = (amount: number) =>
 
 export default function CheckoutPage() {
     const [quantity, setQuantity] = useState("1");
+    const [contact, setContact] = useState({ email: "", firstName: "", lastName: "" });
+    const [isSignedIn, setIsSignedIn] = useState(false);
     const numericQuantity = Math.min(MAX_QUANTITY, Math.max(1, Number(quantity) || 1));
     const subtotal = UNIT_PRICE * numericQuantity;
     const hasQuantityDiscount = numericQuantity >= 2;
@@ -31,6 +35,35 @@ export default function CheckoutPage() {
     const shippingFee = hasQuantityDiscount ? 0 : SHIPPING_FEE;
     const totalPrice = subtotal + shippingFee - discount;
     const amountSaved = discount + (hasQuantityDiscount ? SHIPPING_FEE : 0);
+
+    useEffect(() => {
+        let isCurrent = true;
+        const supabase = createClient();
+
+        async function prefillContactDetails() {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error) {
+                console.error("Could not load the signed-in customer for checkout.", error);
+                return;
+            }
+            if (!isCurrent || !user) {
+                return;
+            }
+
+            const metadata = user.user_metadata;
+            setIsSignedIn(true);
+            setContact({
+                email: user.email ?? "",
+                firstName: typeof metadata?.first_name === "string" ? metadata.first_name : "",
+                lastName: typeof metadata?.last_name === "string" ? metadata.last_name : "",
+            });
+        }
+
+        void prefillContactDetails();
+        return () => {
+            isCurrent = false;
+        };
+    }, []);
 
     function updateQuantity(value: string) {
         setQuantity(value);
@@ -46,19 +79,52 @@ export default function CheckoutPage() {
             <main className="checkout-page-main">
                 <form className="checkout-form">
                     <div className="checkout-contact-form">
-                        <b>Contact</b>
+                        <div className="checkout-contact-heading">
+                            <b>Contact</b>
+                            {!isSignedIn && <Link href="/login">Sign in</Link>}
+                        </div>
                         <div className="checkout-form-group">
-                                <label htmlFor="email">Email</label>
-                                <input type="email" id="email" name="email" required placeholder="Email"></input> 
-                            </div>
+                            <label htmlFor="email">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                required
+                                placeholder="Email"
+                                autoComplete="email"
+                                readOnly={isSignedIn}
+                                value={contact.email}
+                                onChange={(event) => setContact((current) => ({ ...current, email: event.currentTarget.value }))}
+                            />
+                        </div>
                         <div className="checkout-form-two-col">
                             <div className="checkout-form-group">
                                 <label htmlFor="first-name">First Name</label>
-                                <input type="text" id="first-name" name="first-name" required placeholder="First Name"></input> 
+                                <input
+                                    type="text"
+                                    id="first-name"
+                                    name="first-name"
+                                    required
+                                    placeholder="First Name"
+                                    autoComplete="given-name"
+                                    readOnly={isSignedIn}
+                                    value={contact.firstName}
+                                    onChange={(event) => setContact((current) => ({ ...current, firstName: event.currentTarget.value }))}
+                                />
                             </div>
                             <div className="checkout-form-group">
                                 <label htmlFor="last-name">Last Name</label>
-                                <input type="text" id="last-name" name="last-name" required placeholder="Last Name"></input>
+                                <input
+                                    type="text"
+                                    id="last-name"
+                                    name="last-name"
+                                    required
+                                    placeholder="Last Name"
+                                    autoComplete="family-name"
+                                    readOnly={isSignedIn}
+                                    value={contact.lastName}
+                                    onChange={(event) => setContact((current) => ({ ...current, lastName: event.currentTarget.value }))}
+                                />
                             </div>
                         </div>
                     </div>
@@ -73,7 +139,7 @@ export default function CheckoutPage() {
                         <div className="checkout-form-two-col">
                             <div className="checkout-form-group">
                                 <label htmlFor="address-line-2">Apartment, suite, unit (Optional)</label>
-                                <input type="text" id="address-line-2" name="address-line-2" placeholder="Apartment, suite, unit (Optional)"></input> 
+                                <input type="text" id="address-line-2" name="address-line-2" placeholder="Apartment, suite, unit (Optional)"></input>
                             </div>
                             <div className="checkout-form-group">
                                 <label htmlFor="barangay">Barangay</label>
@@ -83,7 +149,7 @@ export default function CheckoutPage() {
                         <div className="checkout-form-two-col">
                             <div className="checkout-form-group">
                                 <label htmlFor="postal-code">Postal Code</label>
-                                <input type="text" id="postal-code" name="postal-code" placeholder="Postal Code"></input> 
+                                <input type="text" id="postal-code" name="postal-code" placeholder="Postal Code"></input>
                             </div>
                             <div className="checkout-form-group">
                                 <label htmlFor="city">City</label>
@@ -110,7 +176,7 @@ export default function CheckoutPage() {
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
                                         <span>Pay with MariBank</span>
-                                        <Image src="/assets/maribank.svg" alt="MariBank" width={32} height={32} />
+                                        <Image src="/assets/MariBank.svg" alt="MariBank" width={32} height={32} />
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
@@ -120,7 +186,7 @@ export default function CheckoutPage() {
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
                                         <span>Pay with PayPal</span>
-                                        <Image src="/assets/paypal.svg" alt="PayPal" width={32} height={32} />
+                                        <Image src="/assets/PayPal.svg" alt="PayPal" width={32} height={32} />
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
@@ -130,7 +196,7 @@ export default function CheckoutPage() {
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
                                         <span>Pay with GCash</span>
-                                        <Image src="/assets/gcash.svg" alt="PayPal" width={32} height={32} />
+                                        <Image src="/assets/GCash.svg" alt="GCash" width={32} height={32} />
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>
