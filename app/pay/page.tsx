@@ -14,23 +14,23 @@ type PaymentPageProps = {
 };
 
 const paymentMethods = {
-    gcash: {
-        name: "GCash",
+    "bank-transfer": {
+        name: "Bank Transfer",
         accountName: "Mark Jerson Luna",
-        accountDetails: "GCash number: 0976 051 ****",
-        qr: "/assets/QR/GCashQR.jpg",
-    },
-    maribank: {
-        name: "MariBank",
-        accountName: "Mark Jerson Luna",
-        accountDetails: "MariBank number: **** 9079",
+        accountDetails: <>MariBank account number: **** 9079<br />Transfer from Philippine banks via InstaPay.</>,
         qr: "/assets/QR/MariBankQR.jpg",
     },
     paypal: {
         name: "PayPal",
-        accountName: "To be confirmed",
-        accountDetails: "PayPal email or PayPal.me link to be confirmed",
-        qr: null,
+        accountName: "Mark Jerson Luna",
+        accountDetails: "Scan the QR code to pay via PayPal.",
+        qr: "/assets/QR/PayPalQR.jpg",
+    },
+    gcash: {
+        name: "GCash",
+        accountName: "Mark Jerson Luna",
+        accountDetails: <>GCash number: 0976 051 ****<br />User ID: **********7T8TT4</>,
+        qr: "/assets/QR/GCashQR.jpg",
     },
 } as const;
 
@@ -46,9 +46,17 @@ function CopyButton() {
 export default async function PaymentPage({ searchParams }: PaymentPageProps) {
     const query = await searchParams;
     const orderNumber = "LP-000123";
-    const methodKey = query.method === "maribank" ? "maribank" : query.method === "paypal" ? "paypal" : "gcash";
+    const methodKey = query.method === "bank-transfer" || query.method === "maribank"
+        ? "bank-transfer"
+        : query.method === "paypal"
+            ? "paypal"
+            : "gcash";
     const method = paymentMethods[methodKey];
-    const methodLogo = methodKey === "gcash" ? "/assets/GCash.svg" : methodKey === "maribank" ? "/assets/MariBank.svg" : "/assets/PayPal.svg";
+    const methodLogo = methodKey === "gcash"
+        ? "/assets/GCash.svg"
+        : methodKey === "bank-transfer"
+            ? "/assets/MariBank.svg"
+            : "/assets/PayPal.svg";
 
     return (
         <div className="payment-page-layout">
@@ -97,7 +105,9 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
                                         <p className="payment-helper">Pay this exact amount, no more and no less.</p>
                                     </div>
                                     <div className="payment-detail-block">
-                                        <div className="payment-detail-label">{method.name} account</div>
+                                        <div className="payment-detail-label">
+                                            {methodKey === "paypal" ? "PayPal payment" : `${method.name} account`}
+                                        </div>
                                         <div className="payment-copy-row">
                                             <div className="payment-account-values">
                                                 <span className="payment-account-name">{method.accountName}</span>
@@ -115,9 +125,6 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
                                         <p className="payment-helper">Add this to the payment notes so we can match your order.</p>
                                     </div>
                                 </div>
-                                {methodKey === "paypal" && (
-                                    <p className="payment-helper">Pay the exact amount shown. The PayPal account details are to be confirmed.</p>
-                                )}
                             </div>
                         </section>
 
@@ -148,7 +155,11 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
                             <div className="payment-step-card">
                                 <span className="payment-step-number">1</span>
                                 <h3>Pay the exact amount</h3>
-                                <p>Scan the QR or send it to the number shown.</p>
+                                <p>
+                                    {methodKey === "bank-transfer"
+                                        ? "Transfer to this MariBank account from your bank using the QR code or account details."
+                                        : "Scan the QR code or send payment to the account details shown."}
+                                </p>
                             </div>
                             <div className="payment-step-card">
                                 <span className="payment-step-number">2</span>

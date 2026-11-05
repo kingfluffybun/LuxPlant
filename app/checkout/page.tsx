@@ -5,7 +5,7 @@ import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
-import { HandCoins, Minus, Plus, Tag, BadgePercent } from "lucide-react";
+import { HandCoins, Minus, Plus, Tag, BadgePercent, Landmark } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import CheckoutRegionSelect from "../components/CheckoutRegionSelect";
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
                         <b>Payment</b>
                         <div className="checkout-payment-options">
                             <label className="checkout-payment-option">
-                                <input type="radio" name="paymentMethod" value="bank-transfer" required />
+                                <input type="radio" name="paymentMethod" value="cash-on-delivery" required />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
                                         <span>Cash on delivery</span>
@@ -172,11 +172,11 @@ export default function CheckoutPage() {
                                 </span>
                             </label>
                             <label className="checkout-payment-option">
-                                <input type="radio" name="paymentMethod" value="cash-on-delivery" />
+                                <input type="radio" name="paymentMethod" value="bank-transfer" />
                                 <span className="checkout-payment-radio">
                                     <div className="checkout-payment-content">
-                                        <span>Pay with MariBank</span>
-                                        <Image src="/assets/MariBank.svg" alt="MariBank" width={32} height={32} />
+                                        <span>Bank Transfer</span>
+                                        <Landmark size={32} color="#fff"/>
                                     </div>
                                     <span className="checkout-payment-indicator" aria-hidden="true" />
                                 </span>

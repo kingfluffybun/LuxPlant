@@ -50,7 +50,7 @@ export default function Home() {
                         <p>This started as a gift — a Fluora LED Plant that couldn't ship to my country. 
                             So I built one myself instead. Every stem is 3D-printed, every leaf is tuned for even light diffusion
                         </p>
-                        <Link href={"/"} className="link-button-primary">Read the full story</Link>
+                        <Link href={"/about"} className="link-button-primary">Read the full story</Link>
                     </div>
                     <div className="section-img">
                         <div className="image-placeholder">

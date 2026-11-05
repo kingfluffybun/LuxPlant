@@ -17,7 +17,7 @@
 }
 
 .payment-page-header {
-    max-width: 760px;
+    max-width: 800px;
     margin-bottom: 32px;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .payment-page-header > p {
-    max-width: 65ch;
+    max-width: 70ch;
     font-size: 1rem;
     line-height: 1.6;
 }
@@ -112,7 +112,7 @@
 }
 
 .payment-method-logo {
-    width: 40px;
+    width: auto;
     height: 40px;
     padding: 4px;
     border-radius: 8px;

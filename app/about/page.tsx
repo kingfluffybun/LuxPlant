@@ -11,68 +11,72 @@ export default function AboutPage() {
             <Navigation />
             <main className="about-page-main">
                 <div className="about-intro">
-                    <h1>A little light, grown from an idea.</h1>
+                    <h1>A little light, grown from one small idea.</h1>
                     <p>
-                        LuxPlant makes 3D-printed plants that glow from the inside in any color you choose.
-                        Each unit is made and shipped from the Philippines.
+                        I wanted to give someone a glowing plant. When I couldn’t find a way to get one here,
+                        I decided to try making it myself. That idea became LuxPlant, made and shipped from
+                        the Philippines.
                     </p>
                 </div>
 
                 <div className="about-story">
                     <div className="about-section-heading">
-                        <h2>Built out of a shipping problem</h2>
+                        <h2>The gift I couldn’t send</h2>
                     </div>
                     <div className="about-section-copy">
                         <p>
-                            LuxPlant started as a gift. I wanted to give someone a Fluora LED Plant, but it
-                            could not ship to the Philippines. So I built one myself instead.
+                            The idea began when I wanted to give someone a Fluora LED Plant, but it couldn’t
+                            be shipped to the Philippines. Rather than give up on the gift, I started figuring
+                            out how to build a glowing plant of my own.
                         </p>
                         <p>
-                            Every stem is 3D-printed, and every leaf is tuned for even light diffusion. Each
-                            leaf uses light-diffusing filament and addressable RGB LEDs, creating a smooth glow
-                            across the whole leaf.
+                            I 3D-printed the stems and worked on getting the light to spread softly through
+                            each leaf. Light-diffusing filament and addressable RGB LEDs brought the first
+                            version to life, with color glowing across the leaves from within.
                         </p>
                     </div>
                 </div>
 
                 <div className="about-process">
                     <div>
-                        <h2>Getting the light right</h2>
+                        <h2>Learning how to make it glow</h2>
                     </div>
                     <p>
-                        Getting a plant to glow evenly took a lot of trial and error. I tested materials,
-                        lighting, stems, and wiring, and redesigned parts when something did not work. The
-                        plant you see today is the result of that process, and I keep refining it.
+                        The first version was only the beginning. Getting the leaves to glow evenly took
+                        trial and error: I tested materials, lighting, stems, and wiring, then redesigned
+                        parts whenever something did not work. The LuxPlant Mini grew out of those
+                        experiments, and I’m still refining it.
                     </p>
                 </div>
 
                 <div className="about-independent">
                     <div className="about-section-heading">
-                        <h2>Made with care, right here</h2>
+                        <h2>A small project, built with care</h2>
                     </div>
                     <div className="about-section-copy">
                         <p>
-                            LuxPlant is an independent project. Filament and printing time are expensive here
-                            in the Philippines, and every purchase helps cover that. Your support goes directly
-                            into developing the next model.
+                            I make LuxPlant independently in the Philippines, where filament and printing
+                            time are expensive. Each purchase helps cover the work behind every plant and
+                            supports the development of what comes next.
                         </p>
                     </div>
                 </div>
 
                 <div className="about-next">
-                    <h2>Growing beyond the Mini</h2>
+                    <h2>What I’m working toward</h2>
                     <p>
-                        I am developing the LuxPlant Standard, a larger plant planned with 21 leaves and
-                        sturdier stems. There is no release date or price yet. I also plan to bring LuxPlant
-                        to more countries, starting with Indonesia and Malaysia.
+                        The Mini is not the end of the idea. I’m developing the LuxPlant Standard, a larger
+                        plant planned with 21 leaves and thicker stems. It is still in development, and its
+                        release date and price have not been announced.
                     </p>
                 </div>
 
                 <div className="about-warranty">
-                    <h2>Support that stays with you</h2>
+                    <h2>And I’ll be here after it arrives</h2>
                     <p>
-                        Every LuxPlant Mini has an 18-month warranty. If something breaks, I replace it, no
-                        questions asked. Repairs stay free even after the warranty has expired.
+                        Making each plant is personal, and looking after it should be too. Every LuxPlant Mini
+                        comes with an 18-month warranty. If something breaks, I replace it, no questions
+                        asked. Repairs remain free even after the warranty expires.
                     </p>
                 </div>
 
