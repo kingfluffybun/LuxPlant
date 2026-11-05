@@ -149,9 +149,9 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
-                <section className="text-image-section landing-page-section landing-page-section-secondary">
+                <section className="text-image-section landing-page-section landing-page-section-secondary app-promo-section">
                     <div className="section-img">
-                        <div className="image-placeholder"></div>
+                        <Image src={"/assets/AppMockup.webp"} width={1200} height={1200} alt="Preview of the LuxPlant app"></Image>
                     </div>
                     <div className="section-text">
                         <h1>Your plant, controlled from your pocket</h1>
