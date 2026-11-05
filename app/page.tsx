@@ -149,14 +149,14 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
-                <section className="text-image-section landing-page-section landing-page-section-secondary">
+                <section className="text-image-section landing-page-section landing-page-section-secondary app-promo-section">
                     <div className="section-img">
-                        <div className="image-placeholder"></div>
+                        <Image src={"/assets/AppMockup.webp"} width={1024} height={768} alt="Preview of the LuxPlant app"></Image>
                     </div>
                     <div className="section-text">
                         <h1>Your plant, controlled from your pocket</h1>
                         <p>The LuxPlant app wraps WLED's API into a simpler interface built just for the plant — colors, brightness, effects, and schedules in one place.</p>
-                        <Link href={"/"} className="link-button-primary">Download the App</Link>
+                        <Link href="/app" className="link-button-primary">Explore the App</Link>
                     </div>
                 </section>
                 <FaqSection />

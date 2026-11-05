@@ -123,6 +123,21 @@ video {
     }
 }
 
+.app-promo-section .section-img {
+    flex: 1.5;
+    min-width: 0;
+}
+
+.app-promo-section .section-img > img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.app-promo-section .section-text {
+    flex: 1;
+}
+
 .section-text {
     p {font-size: 2rem;}
 }
