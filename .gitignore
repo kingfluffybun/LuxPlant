@@ -27,6 +27,9 @@ skills-lock.json
 
 # production
 /build
+/src-tauri/
+/vite.tauri.config.ts
+/dist/
 
 # misc
 .DS_Store
