@@ -8,6 +8,12 @@ type Province = {
     code: string;
 };
 
+type CheckoutRegionSelectProps = {
+    id?: string;
+    value?: string;
+    onValueChange?: (value: string) => void;
+};
+
 const metroManila: Province = { name: "Metro Manila", code: "1300000000" };
 
 function isProvinceList(value: unknown): value is Province[] {
@@ -22,11 +28,16 @@ function isProvinceList(value: unknown): value is Province[] {
     );
 }
 
-export default function CheckoutRegionSelect() {
+export default function CheckoutRegionSelect({ id = "region", value, onValueChange }: CheckoutRegionSelectProps) {
     const [provinces, setProvinces] = useState<Province[]>([]);
-    const [selectedRegion, setSelectedRegion] = useState(metroManila.code);
+    const [internalSelectedRegion, setInternalSelectedRegion] = useState(metroManila.code);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const selectedRegion = value === undefined
+        ? internalSelectedRegion
+        : value === metroManila.name
+            ? metroManila.code
+            : provinces.find((province) => province.name === value)?.code ?? value;
 
     useEffect(() => {
         const controller = new AbortController();
@@ -68,22 +79,33 @@ export default function CheckoutRegionSelect() {
     }, []);
 
     return (
-        <div className="checkout-form-group" id="select">
-            <label htmlFor="region">Region</label>
+        <div className="checkout-form-group" id={id === "region" ? "select" : undefined}>
+            <label htmlFor={id}>Region</label>
             <select
                 name="region"
-                id="region"
+                id={id}
                 value={selectedRegion}
-                onChange={(event) => setSelectedRegion(event.currentTarget.value)}
+                onChange={(event) => {
+                    const selected = provinces.find((province) => province.code === event.currentTarget.value);
+                    if (value === undefined) {
+                        setInternalSelectedRegion(event.currentTarget.value);
+                    }
+                    onValueChange?.(selected?.name ?? event.currentTarget.value);
+                }}
                 disabled={isLoading || error !== null}
                 required
             >
                 {isLoading ? (
                     <option value={metroManila.code}>Metro Manila</option>
                 ) : (
-                    provinces.map((province) => (
-                        <option key={province.code} value={province.code}>{province.name}</option>
-                    ))
+                    <>
+                        {value && !provinces.some((province) => province.name === value) && (
+                            <option value={selectedRegion}>{value}</option>
+                        )}
+                        {provinces.map((province) => (
+                            <option key={province.code} value={province.code}>{province.name}</option>
+                        ))}
+                    </>
                 )}
             </select>
             <ChevronDown className="select-chevron" size={20} aria-hidden="true" />

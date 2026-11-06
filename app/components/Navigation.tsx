@@ -254,11 +254,11 @@ export default function Navigation({ transparentAtTop = false }: NavigationProps
                   
                 </div>
                 <hr></hr>
-                <Link href="/order" className="profile-menu-item">
+                <Link href="/order" className="profile-menu-item" onClick={() => setIsProfileMenuOpen(false)}>
                   <ShoppingBag />
-                  <p>My Orders</p>
+                  <p>My orders</p>
                 </Link>
-                <Link href="/order" className="profile-menu-item">
+                <Link href="/profile" className="profile-menu-item" onClick={() => setIsProfileMenuOpen(false)}>
                   <User />
                   <p>Profile</p>
                 </Link>

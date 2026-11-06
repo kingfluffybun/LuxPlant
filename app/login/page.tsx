@@ -6,13 +6,18 @@ import "../../public/css/navigation.css";
 import "../../public/css/footer.css";
 
 import { Eye, EyeClosed, TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import Navigation from "../components/Navigation";
 import { createClient } from "../../lib/supabase/client";
+
+function getAccountRedirect() {
+  const redirect = new URLSearchParams(window.location.search).get("redirect");
+  return redirect === "/profile" || redirect === "/order" ? redirect : "/";
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,9 +29,32 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    let isCurrent = true;
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (!isCurrent) return;
+      if (error) {
+        if (error.name !== "AuthSessionMissingError" && error.message !== "Auth session missing!") {
+          console.error("Could not check the signed-in user after login.", error);
+        }
+        return;
+      }
+      if (data.user) router.replace(getAccountRedirect());
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, [router, supabase]);
+
   const handleOAuthLogin = async (provider: "google") => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      const redirect = getAccountRedirect();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/login?redirect=${encodeURIComponent(redirect)}`,
+        },
+      });
       if (error) throw error;
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : "OAuth login failed");
@@ -58,7 +86,7 @@ export default function LoginPage() {
       setEmail("");
       setPassword("");
       
-      router.push("/");
+      router.push(getAccountRedirect());
     } catch (err: unknown) {
       setErrorMsg(getLoginErrorMessage(err));
     } finally {

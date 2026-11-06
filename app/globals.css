@@ -29,7 +29,7 @@ p {
 }
 
 b {
-    font-family: var(--font-roboto);
+    font-family: var(--font-montserrat);
     color: var(--text-main);
     font-size: 1.25rem;
     font-weight: 700;
