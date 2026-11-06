@@ -216,6 +216,16 @@
     color: var(--primary);
 }
 
+@media (max-width: 560px) {
+  .cart-drawer {
+    width: 100vw;
+  }
+
+  .cart-drawer-item {
+    padding: 0 16px;
+  }
+}
+
 .cart-drawer-item .order-item-prices {
     display: flex;
     flex-direction: column;

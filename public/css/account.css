@@ -260,6 +260,42 @@
     padding-bottom: 4px;
 }
 
+@media (max-width: 960px) {
+  .account-main {
+    width: min(1216px, calc(100% - 24px));
+    padding: 96px 0 64px;
+  }
+
+  .profile-layout {
+    flex-direction: column;
+  }
+
+  .profile-sidebar,
+  .profile-content {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .account-main {
+    width: min(1216px, calc(100% - 20px));
+    padding-top: 80px;
+  }
+
+  .profile-content {
+    padding: 20px;
+  }
+
+  .profile-read-row,
+  .account-field-row {
+    flex-direction: column;
+  }
+
+  .profile-read-row {
+    gap: 8px;
+  }
+}
+
 .account-field:has(input:focus) input::placeholder {
     color: transparent;
 }

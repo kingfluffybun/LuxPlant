@@ -150,3 +150,27 @@
     object-fit: cover;
     object-position: center top;
 }
+
+@media (max-width: 900px) {
+  .app-info-main {
+    padding: 16px;
+  }
+
+  .app-info-hero {
+    padding: 32px 20px 0;
+  }
+
+  .app-info-feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-info-hero h1 {
+    font-size: clamp(2.1rem, 9vw, 3rem);
+  }
+
+  .app-info-features {
+    padding: 48px 16px;
+  }
+}

@@ -2,7 +2,6 @@
 
 import "../../public/app.css";
 import { useEffect, useRef, useState } from "react";
-import { invoke, isTauri } from "@tauri-apps/api/core";
 
 type Tab = "color" | "fx" | "pal" | "presets" | "more";
 type Connection = "demo" | "live" | "offline";

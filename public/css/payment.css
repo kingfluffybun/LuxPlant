@@ -196,6 +196,55 @@
     white-space: nowrap;
 }
 
+@media (max-width: 980px) {
+  .payment-page-main {
+    height: auto;
+    padding: 32px 20px 72px;
+  }
+
+  .payment-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-method-body {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-page-header h1 {
+    font-size: clamp(1.9rem, 7vw, 2.25rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .payment-page-main {
+    padding: 24px 16px 56px;
+  }
+
+  .payment-card,
+  .payment-state-card {
+    padding: 18px;
+  }
+
+  .payment-card-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .payment-complete-content > h1 {
+    font-size: 2rem;
+  }
+
+  .payment-complete-summary {
+    padding: 18px;
+  }
+
+  .payment-complete-product,
+  .payment-complete-details > div {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
 .payment-columns {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 360px;
