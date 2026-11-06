@@ -1,6 +1,7 @@
 "use client";
 
 import "../../public/app.css";
+import { invoke } from '@tauri-apps/api/core';
 import { useEffect, useRef, useState } from "react";
 
 type Tab = "color" | "fx" | "pal" | "presets" | "more";
@@ -1701,4 +1702,8 @@ export default function App() {
             {renderDialog()}
         </div>
     );
+}
+
+function isTauri() {
+    return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 }
