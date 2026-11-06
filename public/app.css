@@ -101,9 +101,8 @@ body {
   .brand-logo {
     display: block;
     width: 104px;
-    height: auto;
-    max-height: 32px;
-    object-fit: contain;
+    height: 32px;
+    background: url("/assets/logo/logo-white.png") center / contain no-repeat;
     filter: drop-shadow(0 0 12px color-mix(in srgb, var(--primary) 32%, transparent));
   }
 

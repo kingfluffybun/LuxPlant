@@ -88,3 +88,24 @@
 .about-page-layout > .site-footer {
     grid-area: footer;
 }
+
+@media (max-width: 900px) {
+  .about-page-main {
+    padding: 64px 20px;
+  }
+
+  .about-intro h1 {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .about-intro > p,
+  .about-section-copy p,
+  .about-process > p,
+  .about-next > p,
+  .about-warranty > p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}

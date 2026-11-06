@@ -95,3 +95,23 @@
 .policy-document ol {
     list-style-type: decimal;
 }
+
+@media (max-width: 720px) {
+  .policy-page-main {
+    padding: 48px 20px 72px;
+  }
+
+  .policy-document h1 {
+    font-size: clamp(2.2rem, 8vw, 3rem);
+  }
+
+  .policy-document h2 {
+    font-size: 1.4rem;
+  }
+
+  .policy-document p,
+  .policy-document li {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}

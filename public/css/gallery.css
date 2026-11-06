@@ -34,3 +34,16 @@
 .gallery-page-layout > .site-footer {
     grid-area: footer;
 }
+
+@media (max-width: 900px) {
+  .gallery-page-section {
+    padding: 56px 20px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .gallery-page-section {
+    padding: 40px 16px;
+  }
+}

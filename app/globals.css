@@ -29,7 +29,7 @@ p {
 }
 
 b {
-    font-family: var(--font-roboto);
+    font-family: var(--font-montserrat);
     color: var(--text-main);
     font-size: 1.25rem;
     font-weight: 700;
@@ -113,4 +113,19 @@ input[type=text], input[type=password], input[type=email], select {
     width: 48px; height: 48px;
     display: flex; justify-content: center; align-items: center;
     border-radius: 999px; border: 2px solid currentColor;
+}
+
+@media (max-width: 900px) {
+  h1 { font-size: clamp(2.25rem, 8vw, 3.25rem); }
+  h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+  h3 { font-size: 1.25rem; }
+  p { font-size: 1rem; }
+  a { font-size: 1rem; }
+}
+
+@media (max-width: 640px) {
+  .link-button-primary,
+  .link-button-secondary {
+    width: 100%;
+  }
 }

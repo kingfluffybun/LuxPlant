@@ -1,0 +1,953 @@
+.account-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.account-main {
+    width: min(1216px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 128px 0 96px;
+    flex: 1;
+}
+
+.account-heading {
+    margin-bottom: 32px;
+}
+
+.account-heading h1 {
+    margin-bottom: 12px;
+    font-size: 2.5rem;
+}
+
+.account-heading p {
+    max-width: 672px;
+    color: var(--text-body);
+    font-size: 1rem;
+}
+
+.account-loading,
+.account-alert,
+.account-notice {
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: var(--secondary-background);
+    color: var(--text-body);
+    font-size: 1rem;
+}
+
+.account-alert {
+    border-left: 4px solid var(--error);
+    color: var(--error-text);
+}
+
+.account-notice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-left: 4px solid var(--primary);
+    color: var(--text-main);
+}
+
+.account-notice svg {
+    flex: 0 0 auto;
+    color: var(--primary);
+}
+
+.profile-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.profile-sidebar,
+.profile-content {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--secondary-background);
+}
+
+.profile-sidebar {
+    display: flex;
+    flex: 1 1 256px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+}
+
+.profile-sidebar a,
+.profile-sidebar button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding: 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-body);
+    cursor: pointer;
+    font: 500 1rem var(--font-roboto);
+    text-align: left;
+}
+
+.profile-sidebar a:hover,
+.profile-sidebar button:hover {
+    filter: brightness(1.2);
+}
+
+.profile-sidebar .profile-sidebar-active {
+    background: #5a9a0a1a;
+    color: var(--text-main);
+}
+
+.profile-sidebar-logout {
+    justify-content: flex-start !important;
+    color: var(--text-muted) !important;
+}
+
+.profile-content {
+    display: flex;
+    flex: 3 1 544px;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+    padding: 32px;
+}
+
+.profile-section h2,
+.orders-group > h2 {
+    margin-bottom: 20px;
+    color: var(--text-main);
+    font-size: 1.25rem;
+}
+
+.profile-section-note {
+    margin: -12px 0 16px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.profile-read-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+}
+
+.profile-read-value {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.profile-read-label {
+    color: var(--text-muted);
+    font: 400 0.875rem var(--font-roboto);
+}
+
+.profile-read-text {
+    color: var(--text-main);
+    font: 400 1rem/1.6 var(--font-roboto);
+    overflow-wrap: anywhere;
+}
+
+.account-edit-link,
+.account-text-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #a9d879;
+    cursor: pointer;
+    font: 500 0.875rem var(--font-roboto);
+    text-align: center;
+}
+
+.account-edit-link:hover,
+.account-text-button:hover {
+    filter: brightness(1.2);
+}
+
+.account-helper {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-muted);
+    font: 400 0.875rem/1.5 var(--font-roboto);
+}
+
+.account-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0;
+}
+
+.account-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.account-field,
+.account-edit-form .checkout-form-group {
+    display: flex;
+    flex: 1 1 224px;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.account-edit-form > .account-field,
+.account-edit-form > .checkout-form-group {
+    flex: 0 0 auto;
+}
+
+.account-field {
+    position: relative;
+}
+
+.account-field label {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: 16px;
+    padding: 0;
+    color: var(--text-muted);
+    font: 400 0.75rem var(--font-roboto);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.account-field input,
+.account-edit-form .checkout-form-group select {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    background: var(--secondary-background);
+    color: var(--text-main);
+    font: 400 1rem var(--font-roboto);
+    transition: padding 250ms ease, border-color 160ms ease;
+}
+
+.account-field input::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+.account-field:has(input:not(:placeholder-shown)) label,
+.account-field:has(input:focus) label {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.account-field:has(input:not(:placeholder-shown)) input,
+.account-field:has(input:focus) input {
+    padding-top: 20px;
+    padding-bottom: 4px;
+}
+
+@media (max-width: 960px) {
+  .account-main {
+    width: min(1216px, calc(100% - 24px));
+    padding: 96px 0 64px;
+  }
+
+  .profile-layout {
+    flex-direction: column;
+  }
+
+  .profile-sidebar,
+  .profile-content {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .account-main {
+    width: min(1216px, calc(100% - 20px));
+    padding-top: 80px;
+  }
+
+  .profile-content {
+    padding: 20px;
+  }
+
+  .profile-read-row,
+  .account-field-row {
+    flex-direction: column;
+  }
+
+  .profile-read-row {
+    gap: 8px;
+  }
+}
+
+.account-field:has(input:focus) input::placeholder {
+    color: transparent;
+}
+
+.account-field input:focus,
+.account-edit-form .checkout-form-group select:focus {
+    border-color: var(--text-main);
+}
+
+.account-field input[aria-invalid="true"] {
+    border-color: var(--error);
+}
+
+.account-edit-form .checkout-form-group {
+    position: relative;
+}
+
+.account-edit-form .checkout-form-group select {
+    appearance: none;
+    padding-top: 20px;
+    padding-bottom: 4px;
+}
+
+.account-edit-form .checkout-form-group label {
+    position: absolute;
+    z-index: 1;
+    top: 8px;
+    left: 16px;
+    padding: 0;
+    color: var(--text-muted);
+    font: 400 0.75rem var(--font-roboto);
+    pointer-events: none;
+}
+
+.account-edit-form .checkout-form-group .select-chevron {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.account-field-error {
+    color: var(--error-text);
+    font: 400 0.875rem/1.4 var(--font-roboto);
+}
+
+.account-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.account-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    font: 500 0.875rem var(--font-montserrat);
+    text-align: center;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.account-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.account-button-primary {
+    background: var(--primary);
+    color: var(--text-main);
+}
+
+.account-button-primary:hover:not(:disabled) {
+    filter: brightness(1.2);
+}
+
+.account-button-secondary {
+    border-color: #ffffff2b;
+    background: #ffffff08;
+    color: var(--text-main);
+}
+
+.account-button-secondary:hover:not(:disabled) {
+    filter: brightness(1.2);
+}
+
+.account-button-danger {
+    background: #ef4444;
+    color: #121212;
+}
+
+.profile-manage-section > p {
+    max-width: 672px;
+    margin-bottom: 16px;
+    color: var(--text-body);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.profile-manage-section > .account-button-secondary {
+    color: var(--error-text);
+}
+
+.profile-manage-section > .account-button-secondary:hover:not(:disabled) {
+    background: #ef44441a;
+}
+
+.orders-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.orders-preview-note {
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    border-left: 4px solid #b88a27;
+    border-radius: 8px;
+    background: #b88a2714;
+    color: #e6d6ad;
+    font-size: 0.875rem;
+}
+
+.orders-group > h2 {
+    margin-bottom: 16px;
+}
+
+.orders-subheading {
+    margin: 28px 0 14px;
+    color: var(--text-body);
+    font: 500 1rem var(--font-montserrat);
+}
+
+.order-card {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--secondary-background);
+}
+
+.order-card + .order-card {
+    margin-top: 16px;
+}
+
+.order-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px;
+}
+
+.order-number-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.order-card-header h3 {
+    color: var(--text-main);
+    font: 600 1.25rem var(--font-montserrat);
+}
+
+.order-card-header p {
+    margin-top: 6px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.order-preview-label {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #ffffff0d;
+    color: var(--text-muted);
+    font: 500 0.75rem var(--font-roboto);
+}
+
+.order-status-badge {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font: 500 0.75rem var(--font-roboto);
+    white-space: nowrap;
+}
+
+.order-status-badge > span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.order-status-awaiting,
+.order-status-rejected {
+    background: #b88a2724;
+    color: #f0c767;
+}
+
+.order-status-submitted {
+    background: #3478c424;
+    color: #8bc0ff;
+}
+
+.order-status-processing,
+.order-status-shipped {
+    background: #5a9a0a22;
+    color: #a9d879;
+}
+
+.order-status-delivered,
+.order-status-cancelled,
+.order-status-expired {
+    background: #ffffff12;
+    color: var(--text-body);
+}
+
+.order-payment-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 0 24px 24px;
+    padding: 20px;
+    border: 1px solid #b88a2740;
+    border-radius: 12px;
+    background: #b88a2714;
+}
+
+.order-payment-banner h3 {
+    margin-bottom: 6px;
+    color: #f0c767;
+    font: 600 1rem var(--font-montserrat);
+}
+
+.order-payment-banner p,
+.order-status-message p {
+    color: var(--text-body);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.order-payment-banner .account-button {
+    flex: 0 0 auto;
+}
+
+.order-status-message {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 24px 24px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #ffffff08;
+}
+
+.order-status-message svg {
+    flex: 0 0 auto;
+    color: var(--primary);
+}
+
+.order-status-message-rejected {
+    background: #b88a2714;
+}
+
+.order-status-message-rejected svg {
+    color: #f0c767;
+}
+
+.order-status-message-rejected p {
+    flex: 1;
+}
+
+.detailed-order-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 304px), 1fr));
+    gap: 32px;
+    padding: 0 24px 24px;
+}
+
+.order-progress h3,
+.order-items h3,
+.order-details h3 {
+    margin-bottom: 16px;
+    color: var(--text-main);
+    font: 600 1rem var(--font-montserrat);
+}
+
+.order-timeline {
+    list-style: none;
+}
+
+.order-timeline li {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    min-height: 68px;
+    padding-bottom: 16px;
+}
+
+.order-timeline li:not(:last-child)::after {
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    left: 8px;
+    width: 2px;
+    background: #ffffff1a;
+    content: "";
+}
+
+.order-timeline li.is-done:not(:last-child)::after {
+    background: var(--primary);
+}
+
+.timeline-marker {
+    z-index: 1;
+    display: grid;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    place-items: center;
+    border: 2px solid #ffffff38;
+    border-radius: 50%;
+    background: var(--secondary-background);
+    color: var(--background);
+}
+
+.order-timeline .is-done .timeline-marker {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+.order-timeline .is-current .timeline-marker {
+    border: 4px solid var(--primary);
+    background: var(--secondary-background);
+}
+
+.timeline-title {
+    color: var(--text-main);
+    font: 500 0.875rem var(--font-roboto);
+}
+
+.order-timeline li:not(.is-done):not(.is-current) .timeline-title,
+.order-timeline li:not(.is-done):not(.is-current) p {
+    color: var(--text-muted);
+}
+
+.order-timeline p {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.order-details-column {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.detailed-order-item,
+.compact-order-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.order-thumbnail {
+    position: relative;
+    display: block;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #121212;
+}
+
+.order-thumbnail img {
+    object-fit: cover;
+}
+
+.detailed-order-item > div,
+.compact-order-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.detailed-order-item > div > span,
+.compact-order-copy > span {
+    color: var(--text-main);
+    font: 500 0.875rem var(--font-roboto);
+}
+
+.detailed-order-item p,
+.compact-order-copy p {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.detailed-item-price,
+.compact-order-total {
+    color: var(--text-main);
+    font: 500 0.875rem var(--font-roboto);
+    white-space: nowrap;
+}
+
+.order-price-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.order-price-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--text-body);
+    font: 400 0.875rem var(--font-roboto);
+}
+
+.order-price-row > span:last-child {
+    color: var(--text-main);
+    text-align: right;
+}
+
+.order-price-row.is-total {
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.order-price-row.is-total > span {
+    font-size: 1rem;
+}
+
+.order-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.order-detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.order-detail-row > span {
+    flex: 0 0 136px;
+    color: var(--text-muted);
+    font: 400 0.75rem var(--font-roboto);
+}
+
+.order-detail-row p {
+    color: var(--text-body);
+    font-size: 0.875rem;
+    text-align: right;
+}
+
+.order-card-footer,
+.compact-order-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+}
+
+.order-card-footer p,
+.compact-order-footer p {
+    font-size: 0.875rem;
+}
+
+.order-card-footer a,
+.compact-order-footer a {
+    color: #a9d879;
+    font: 500 0.875rem var(--font-roboto);
+}
+
+.order-card-footer .account-text-button {
+    flex: 0 0 auto;
+}
+
+.order-card-compact .order-card-header {
+    padding-bottom: 16px;
+}
+
+.compact-order-item {
+    padding: 0 24px 16px;
+}
+
+.compact-progress {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 24px 16px;
+    padding: 0;
+    list-style: none;
+}
+
+.compact-progress li {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font: 400 0.75rem var(--font-roboto);
+    text-align: center;
+}
+
+.compact-progress li:not(:last-child)::after {
+    position: absolute;
+    top: 8px;
+    left: calc(50% + 12px);
+    width: calc(100% - 24px);
+    height: 2px;
+    background: #ffffff1a;
+    content: "";
+}
+
+.compact-progress li.is-done:not(:last-child)::after {
+    background: var(--primary);
+}
+
+.compact-progress-marker {
+    z-index: 1;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff38;
+    border-radius: 50%;
+    background: var(--secondary-background);
+}
+
+.compact-progress .is-done .compact-progress-marker {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+.compact-progress .is-current {
+    color: var(--text-main);
+}
+
+.compact-progress .is-current .compact-progress-marker {
+    border: 4px solid var(--primary);
+}
+
+.compact-order-footer {
+    min-height: 60px;
+}
+
+.orders-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 40px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--secondary-background);
+}
+
+.orders-empty > svg {
+    color: var(--primary);
+}
+
+.orders-empty h2 {
+    font: 600 1.5rem var(--font-montserrat);
+}
+
+.orders-empty p {
+    font-size: 1rem;
+}
+
+.account-dialog-backdrop {
+    position: fixed;
+    z-index: 500;
+    display: grid;
+    padding: 24px;
+    place-items: center;
+    background: #000000a6;
+    inset: 0;
+}
+
+.account-dialog {
+    position: relative;
+    width: min(100%, 512px);
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: #1b1b1b;
+}
+
+.account-dialog h2 {
+    margin: 0 40px 16px 0;
+    font: 600 1.25rem var(--font-montserrat);
+}
+
+.account-dialog > p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.account-dialog-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.account-dialog-close:hover {
+    background: #ffffff0d;
+    color: var(--text-main);
+}
+
+.account-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}

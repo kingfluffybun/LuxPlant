@@ -102,3 +102,17 @@
 .faq-accordion p + p {
     margin-top: 12px;
 }
+
+@media (max-width: 720px) {
+  .product-dropdown-header {
+    padding: 18px 16px;
+  }
+
+  .product-dropdown-content-inner {
+    padding: 0 16px 18px;
+  }
+
+  .faq-section {
+    padding: 56px 16px;
+  }
+}
